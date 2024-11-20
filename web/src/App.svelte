@@ -1,4 +1,5 @@
 <script lang="ts">
+    import Navbar from "./components/Navbar.svelte";
 </script>
 
-<div class="text-xl text-slate-800">hello world</div>
+<Navbar />
