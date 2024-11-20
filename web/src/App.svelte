@@ -1,4 +1,4 @@
 <script lang="ts">
 </script>
 
-<div>hello world</div>
+<div class="text-xl text-slate-800">hello world</div>
