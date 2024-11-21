@@ -2,6 +2,8 @@
   import { Route, Router } from "svelte-routing";
   import Navbar from "./components/Navbar.svelte";
   import Homepage from "./pages/Homepage.svelte";
+  import Register from "./pages/Register.svelte";
+  import Login from "./pages/Login.svelte";
 
   export let url = "";
 </script>
@@ -13,4 +15,6 @@
   </div>
 
   <Route path="/" component={Homepage} />
+  <Route path="/login" component={Login} />
+  <Route path="/register" component={Register} />
 </Router>
