@@ -2,15 +2,9 @@
   import Recipe from "../components/Recipe.svelte";
 </script>
 
-<!-- images -->
-<div class="relative -z-10 h-[85vh]">
-  <div class="absolute inset-y-10">
-    <img src="background.svg" class="h-auto w-full" />
-  </div>
-
-  <div class="absolute left-[37vw] top-[24vh] p-2 pt-2">
-    <img src="logo-black.svg" class="h-[290px]" />
-  </div>
+<!-- image -->
+<div class="h-[85vh] p-2 pl-[37vw] pt-[24vh]">
+  <img src="logo-black.svg" class="h-[290px]" />
 </div>
 
 <!-- top rated recipes -->
