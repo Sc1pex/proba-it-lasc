@@ -3,7 +3,7 @@
 </script>
 
 <div class="flex bg-white">
-  <img src="tmp/pizza.png" class="w-[14vw]" />
+  <img src="tmp/pizza.png" class="w-[14vw] object-contain" />
 
   <div class="border-l-green w-[14vw] border-l-2 px-4 pb-6 pt-8 text-center">
     <p class="font-bold">{name}</p>

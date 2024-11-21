@@ -48,11 +48,15 @@
 </form>
 
 <!-- Socials -->
-<div
-  class="flex h-[120px] justify-center gap-12 bg-[url('wave.svg')] bg-cover py-10"
->
-  <img src="instagram.svg" />
-  <img src="facebook.svg" />
-  <img src="youtube.svg" />
-  <img src="twitch.svg" />
+<div class="relative h-[10vh]">
+  <div class="absolute inset-0 -z-10">
+    <img src="wave.svg" class="min-h-full w-full object-cover" />
+  </div>
+
+  <div class="clas z-10 flex h-[10vh] items-center justify-center gap-12 py-8">
+    <img class="ml-10 h-[4vh]" src="instagram.svg" />
+    <img class="h-[4vh]" src="facebook.svg" />
+    <img class="h-[4vh]" src="youtube.svg" />
+    <img class="h-[4vh]" src="twitch.svg" />
+  </div>
 </div>

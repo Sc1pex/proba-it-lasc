@@ -10,8 +10,8 @@
 
 <Router {url}>
   <Navbar />
-  <div class="absolute inset-y-10 -z-10 mt-[10vh]">
-    <img src="background.svg" class="h-auto w-full" />
+  <div class="absolute inset-y-10 -z-10 mt-[10vh] overflow-hidden">
+    <img src="background.svg" class="w-[100vw]" />
   </div>
 
   <Route path="/" component={Homepage} />
