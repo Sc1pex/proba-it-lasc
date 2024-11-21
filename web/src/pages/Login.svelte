@@ -5,8 +5,10 @@
   <form
     class="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-[6rem] pt-12 text-white"
   >
-    <p class="text-balance text-center text-[32px] font-bold">
-      Loghează-te, chiorăie mațele!
+    <p
+      class="font-inter text-balance text-center text-[32px] font-bold leading-10"
+    >
+      Loghează-te, <br /> chiorăie mațele!
     </p>
 
     <div class="mt-16 flex border-b px-2 pb-3">

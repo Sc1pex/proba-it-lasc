@@ -9,6 +9,7 @@ export default {
       },
       fontFamily: {
         body: ['"Montserrat"'],
+        inter: ['"Inter"'],
       },
       backgroundImage: {
         food: "url('/background.svg')",
