@@ -5,9 +5,13 @@ export default {
     extend: {
       colors: {
         "dark-blue": "#00236D",
+        green: "#009C41",
       },
       fontFamily: {
         body: ['"Montserrat"'],
+      },
+      backgroundImage: {
+        food: "url('/background.svg')",
       },
     },
   },
