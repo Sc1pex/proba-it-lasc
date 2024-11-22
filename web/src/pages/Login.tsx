@@ -1,12 +1,8 @@
 export function Login() {
   return (
     <div className="mt-[10vh] flex items-start justify-center">
-      <form
-        className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-[6rem] pt-12 text-white"
-      >
-        <p
-          className="font-inter text-balance text-center text-[32px] font-bold leading-10"
-        >
+      <form className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-[6rem] pt-12 text-white">
+        <p className="font-inter text-balance text-center text-[32px] font-bold leading-10">
           Loghează-te, <br /> chiorăie mațele!
         </p>
 
@@ -38,5 +34,5 @@ export function Login() {
         </div>
       </form>
     </div>
-  )
+  );
 }

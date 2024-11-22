@@ -20,6 +20,5 @@ export function Recipe({ name }: { name: string }) {
         <p className="">Prenume Nume</p>
       </div>
     </div>
-
-  )
+  );
 }

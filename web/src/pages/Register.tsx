@@ -1,12 +1,8 @@
 export function Register() {
   return (
     <div className="mt-[10vh] flex items-start justify-center">
-      <form
-        className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-16 pt-12 text-white"
-      >
-        <p
-          className="font-inter text-balance text-center text-[32px] font-bold leading-10"
-        >
+      <form className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-16 pt-12 text-white">
+        <p className="font-inter text-balance text-center text-[32px] font-bold leading-10">
           Hai, fă foamea cu noi!
         </p>
 
@@ -62,6 +58,5 @@ export function Register() {
         </div>
       </form>
     </div>
-  )
+  );
 }
-
