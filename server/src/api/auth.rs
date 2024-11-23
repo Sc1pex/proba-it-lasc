@@ -2,7 +2,7 @@ use super::*;
 use anyhow::{anyhow, Result};
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
-    Argon2, PasswordHasher,
+    Argon2, PasswordHash, PasswordHasher, PasswordVerifier,
 };
 use axum::extract::{self, State};
 use axum_extra::extract::{
@@ -15,10 +15,39 @@ use time::Duration;
 use uuid::Uuid;
 
 #[derive(Deserialize)]
-pub struct LoginRequest {}
+pub struct LoginRequest {
+    email: String,
+    password: String,
+}
 
-pub async fn login() -> ApiResult<()> {
-    todo!()
+pub async fn login(
+    State(state): State<AppState>,
+    extract::Json(login): extract::Json<LoginRequest>,
+) -> ApiResult<CookieJar> {
+    let user = if let Some(user) = state.db.get_user_from_email(&login.email).await? {
+        user
+    } else {
+        return Err(ApiError::InvalidFields(
+            [(
+                "email".to_string(),
+                "User with that email dosen't exist".to_string(),
+            )]
+            .into(),
+        ));
+    };
+
+    if !correct_password(&user.password_hash, &login.password)? {
+        return Err(ApiError::InvalidFields(
+            [("password".to_string(), "Wrong password".to_string())].into(),
+        ));
+    }
+
+    let session_id = if let Some(s) = state.db.get_session_from_user(&user.id).await? {
+        s.session_id
+    } else {
+        state.db.create_user_session(&user.id).await?
+    };
+    Ok(CookieJar::new().add(session_cookie(session_id)))
 }
 
 #[derive(Deserialize)]
@@ -35,7 +64,7 @@ pub async fn register(
 ) -> ApiResult<CookieJar> {
     let mut errors = HashMap::new();
 
-    if let Err(pass_err) = validate_password(&register.password) {
+    if let Err(pass_err) = valid_password(&register.password) {
         errors.insert("password".into(), pass_err);
     }
 
@@ -62,11 +91,7 @@ pub async fn register(
         .await?;
 
     let session_id = state.db.create_user_session(&user_id).await?;
-    let cookie = Cookie::build(("session_id", session_id.to_string()))
-        .max_age(Duration::days(30))
-        .same_site(SameSite::Lax);
-
-    Ok(CookieJar::new().add(cookie))
+    Ok(CookieJar::new().add(session_cookie(session_id)))
 }
 
 #[derive(Serialize)]
@@ -85,25 +110,39 @@ pub async fn get_user(
     };
     let session_id = Uuid::from_str(session_id)?;
 
-    let session = if let Some(s) = state.db.get_user_session(&session_id).await? {
+    let session = if let Some(s) = state.db.get_session_from_id(&session_id).await? {
         s
     } else {
         return invalid_data("Invalid cookie. Please logout and login again");
     };
     // TODO: check if session is older than 30 days
 
-    let user = state.db.get_user(&session.user_id).await?;
+    let user = state.db.get_user_from_id(&session.user_id).await?;
     let resp = GetUserResponse { name: user.name };
 
     Ok(Json(resp).into_response())
 }
 
-fn validate_password(password: &str) -> Result<(), String> {
+fn session_cookie<'a>(session_id: Uuid) -> impl Into<Cookie<'a>> {
+    Cookie::build(("session_id", session_id.to_string()))
+        .max_age(Duration::days(30))
+        .same_site(SameSite::Lax)
+}
+
+fn valid_password(password: &str) -> Result<(), String> {
     if password.len() < 8 {
         return Err("Password must be at least 8 characters long".into());
     }
 
     Ok(())
+}
+
+fn correct_password(password_hash: &str, password: &str) -> Result<bool> {
+    let parsed_hash = PasswordHash::new(&password_hash)
+        .map_err(|_| anyhow!("invalid password hash stored in db"))?;
+    Ok(Argon2::default()
+        .verify_password(password.as_bytes(), &parsed_hash)
+        .is_ok())
 }
 
 fn hash_password(password: &str) -> Result<String> {

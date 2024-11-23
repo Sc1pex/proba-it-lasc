@@ -62,10 +62,10 @@ impl Db {
         .map_err(Into::into)
     }
 
-    pub async fn get_user_session(&self, session_id: &Uuid) -> Result<Option<UserSession>> {
+    pub async fn get_session_from_id(&self, session_id: &Uuid) -> Result<Option<UserSession>> {
         query_as!(
             UserSession,
-            r#"SELECT user_id, created_at FROM UserSessions WHERE session_id = $1"#,
+            r#"SELECT * FROM UserSessions WHERE session_id = $1"#,
             session_id
         )
         .fetch_optional(&self.0)
@@ -73,25 +73,42 @@ impl Db {
         .map_err(Into::into)
     }
 
-    pub async fn get_user(&self, user_id: &Uuid) -> Result<User> {
+    pub async fn get_session_from_user(&self, user_id: &Uuid) -> Result<Option<UserSession>> {
         query_as!(
-            User,
-            r#"SELECT name, email, phone FROM Users WHERE id = $1"#,
+            UserSession,
+            r#"SELECT * FROM UserSessions WHERE user_id = $1"#,
             user_id
         )
-        .fetch_one(&self.0)
+        .fetch_optional(&self.0)
         .await
         .map_err(Into::into)
+    }
+
+    pub async fn get_user_from_id(&self, user_id: &Uuid) -> Result<User> {
+        query_as!(User, r#"SELECT * FROM Users WHERE id = $1"#, user_id)
+            .fetch_one(&self.0)
+            .await
+            .map_err(Into::into)
+    }
+
+    pub async fn get_user_from_email(&self, email: &str) -> Result<Option<User>> {
+        query_as!(User, r#"SELECT * FROM Users WHERE email = $1"#, email)
+            .fetch_optional(&self.0)
+            .await
+            .map_err(Into::into)
     }
 }
 
 pub struct User {
+    pub id: Uuid,
     pub name: String,
     pub email: String,
     pub phone: String,
+    pub password_hash: String,
 }
 
 pub struct UserSession {
+    pub session_id: Uuid,
     pub user_id: Uuid,
     pub created_at: PrimitiveDateTime,
 }
