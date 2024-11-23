@@ -49,4 +49,15 @@ impl Db {
         .map(|r| r.id)
         .map_err(Into::into)
     }
+
+    pub async fn create_user_session(&self, user_id: &Uuid) -> Result<Uuid> {
+        query!(
+            r#"INSERT INTO UserSessions(user_id) VALUES ($1) RETURNING session_id"#,
+            user_id
+        )
+        .fetch_one(&self.0)
+        .await
+        .map(|r| r.session_id)
+        .map_err(Into::into)
+    }
 }

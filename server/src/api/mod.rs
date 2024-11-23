@@ -1,9 +1,8 @@
-use std::collections::HashMap;
-
 use crate::db::Db;
 use anyhow::Result;
 use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
 use serde_json::json;
+use std::collections::HashMap;
 use tokio::net::{TcpListener, ToSocketAddrs};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 

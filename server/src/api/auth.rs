@@ -5,8 +5,12 @@ use argon2::{
     Argon2, PasswordHasher,
 };
 use axum::extract::{self, State};
+use axum_extra::extract::{
+    cookie::{Cookie, SameSite},
+    CookieJar,
+};
 use serde::Deserialize;
-use tracing::info;
+use time::Duration;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {}
@@ -26,7 +30,7 @@ pub struct RegisterRequest {
 pub async fn register(
     State(state): State<AppState>,
     extract::Json(register): extract::Json<RegisterRequest>,
-) -> ApiResult<()> {
+) -> ApiResult<CookieJar> {
     let mut errors = HashMap::new();
 
     if let Err(pass_err) = validate_password(&register.password) {
@@ -40,6 +44,10 @@ pub async fn register(
         );
     }
 
+    if errors.len() != 0 {
+        return Err(ApiError::InvalidFields(errors));
+    }
+
     let password_hash = hash_password(&register.password)?;
     let user_id = state
         .db
@@ -51,13 +59,12 @@ pub async fn register(
         )
         .await?;
 
-    info!("Created user with id {}", user_id);
+    let session_id = state.db.create_user_session(&user_id).await?;
+    let cookie = Cookie::build(("session_id", session_id.to_string()))
+        .max_age(Duration::days(30))
+        .same_site(SameSite::Lax);
 
-    if errors.len() != 0 {
-        Err(ApiError::InvalidFields(errors))
-    } else {
-        Ok(())
-    }
+    Ok(CookieJar::new().add(cookie))
 }
 
 fn validate_password(password: &str) -> Result<(), String> {
