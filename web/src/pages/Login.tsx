@@ -1,4 +1,9 @@
+import { useMutation } from "@tanstack/react-query";
+import { login } from "../lib/server";
+
 export function Login() {
+  const { mutate } = useMutation({ mutationFn: login });
+
   return (
     <div className="mt-[10vh] flex items-start justify-center">
       <form className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-[6rem] pt-12 text-white">
@@ -25,7 +30,13 @@ export function Login() {
         </div>
 
         <div className="mt-16 text-center">
-          <button className="bg-green rounded-lg px-24 py-2 text-[32px] font-bold">
+          <button
+            className="bg-green rounded-lg px-24 py-2 text-[32px] font-bold"
+            onClick={(e) => {
+              mutate({ email: "adsds", password: "ads123asd" });
+              e.preventDefault();
+            }}
+          >
             Log in
           </button>
         </div>

@@ -6,21 +6,26 @@ import { Navbar } from "./components/Navbar";
 import { Homepage } from "./pages/Homepage";
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
-      <Navbar />
-      <div className="absolute inset-y-10 -z-10 mt-[10vh] overflow-hidden">
-        <img src="background.svg" className="w-[100vw]" />
-      </div>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <Navbar />
+        <div className="absolute inset-y-10 -z-10 mt-[10vh] overflow-hidden">
+          <img src="background.svg" className="w-[100vw]" />
+        </div>
 
-      <Routes>
-        <Route path="/" element={<Homepage />} />
+        <Routes>
+          <Route path="/" element={<Homepage />} />
 
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </BrowserRouter>
+    </QueryClientProvider>
   </StrictMode>,
 );
