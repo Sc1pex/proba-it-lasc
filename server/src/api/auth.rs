@@ -9,8 +9,10 @@ use axum_extra::extract::{
     cookie::{Cookie, SameSite},
     CookieJar,
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
+use std::str::FromStr;
 use time::Duration;
+use uuid::Uuid;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {}
@@ -65,6 +67,35 @@ pub async fn register(
         .same_site(SameSite::Lax);
 
     Ok(CookieJar::new().add(cookie))
+}
+
+#[derive(Serialize)]
+struct GetUserResponse {
+    name: String,
+}
+
+pub async fn get_user(
+    State(state): State<AppState>,
+    cookies: CookieJar,
+) -> ApiResult<impl IntoResponse> {
+    let session_id = if let Some(s) = cookies.get("session_id") {
+        s.value()
+    } else {
+        return Ok(Json(json!({})).into_response());
+    };
+    let session_id = Uuid::from_str(session_id)?;
+
+    let session = if let Some(s) = state.db.get_user_session(&session_id).await? {
+        s
+    } else {
+        return invalid_data("Invalid cookie. Please logout and login again");
+    };
+    // TODO: check if session is older than 30 days
+
+    let user = state.db.get_user(&session.user_id).await?;
+    let resp = GetUserResponse { name: user.name };
+
+    Ok(Json(resp).into_response())
 }
 
 fn validate_password(password: &str) -> Result<(), String> {

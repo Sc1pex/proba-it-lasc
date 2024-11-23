@@ -10,7 +10,7 @@ CREATE TABLE Users (
 
 CREATE TABLE UserSessions(
     session_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    user_id UUID REFERENCES Users(id),
+    user_id UUID NOT NULL REFERENCES Users(id),
 
-    created_at TIMESTAMP DEFAULT current_timestamp
+    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp
 );

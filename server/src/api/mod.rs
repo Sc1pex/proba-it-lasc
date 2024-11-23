@@ -1,6 +1,11 @@
 use crate::db::Db;
 use anyhow::Result;
-use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
+use axum::{
+    http::StatusCode,
+    response::IntoResponse,
+    routing::{get, post},
+    Json, Router,
+};
 use serde_json::json;
 use std::collections::HashMap;
 use tokio::net::{TcpListener, ToSocketAddrs};
@@ -30,6 +35,7 @@ fn router() -> Router<AppState> {
     Router::new()
         .route("/login", post(auth::login))
         .route("/register", post(auth::register))
+        .route("/user", get(auth::get_user))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::permissive())
 }
@@ -38,6 +44,7 @@ type ApiResult<T> = Result<T, ApiError>;
 
 #[derive(Debug)]
 enum ApiError {
+    InvalidData(String),
     InvalidFields(HashMap<String, String>),
 
     #[allow(dead_code)]
@@ -49,6 +56,9 @@ impl IntoResponse for ApiError {
         tracing::error!("API error: {:?}", self);
 
         match self {
+            ApiError::InvalidData(s) => {
+                (StatusCode::BAD_REQUEST, Json(json!({"err": s}))).into_response()
+            }
             ApiError::InvalidFields(f) => (StatusCode::BAD_REQUEST, Json(f)).into_response(),
             ApiError::Unknown(_) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
@@ -59,8 +69,16 @@ impl IntoResponse for ApiError {
     }
 }
 
-impl From<anyhow::Error> for ApiError {
-    fn from(err: anyhow::Error) -> Self {
+fn invalid_data<T>(err: impl ToString) -> ApiResult<T> {
+    Err(ApiError::InvalidData(err.to_string()))
+}
+
+impl<T> From<T> for ApiError
+where
+    T: Into<anyhow::Error>,
+{
+    fn from(err: T) -> Self {
+        let err: anyhow::Error = err.into();
         Self::Unknown(err)
     }
 }

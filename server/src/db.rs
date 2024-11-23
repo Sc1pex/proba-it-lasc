@@ -1,5 +1,6 @@
 use anyhow::Result;
-use sqlx::{postgres::PgPoolOptions, query, PgPool};
+use sqlx::{postgres::PgPoolOptions, query, query_as, PgPool};
+use time::PrimitiveDateTime;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -60,4 +61,37 @@ impl Db {
         .map(|r| r.session_id)
         .map_err(Into::into)
     }
+
+    pub async fn get_user_session(&self, session_id: &Uuid) -> Result<Option<UserSession>> {
+        query_as!(
+            UserSession,
+            r#"SELECT user_id, created_at FROM UserSessions WHERE session_id = $1"#,
+            session_id
+        )
+        .fetch_optional(&self.0)
+        .await
+        .map_err(Into::into)
+    }
+
+    pub async fn get_user(&self, user_id: &Uuid) -> Result<User> {
+        query_as!(
+            User,
+            r#"SELECT name, email, phone FROM Users WHERE id = $1"#,
+            user_id
+        )
+        .fetch_one(&self.0)
+        .await
+        .map_err(Into::into)
+    }
+}
+
+pub struct User {
+    pub name: String,
+    pub email: String,
+    pub phone: String,
+}
+
+pub struct UserSession {
+    pub user_id: Uuid,
+    pub created_at: PrimitiveDateTime,
 }
