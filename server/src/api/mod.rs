@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use crate::db::Db;
 use anyhow::Result;
-use axum::{http::StatusCode, response::IntoResponse, routing::get, Json, Router};
+use axum::{http::StatusCode, response::IntoResponse, routing::post, Json, Router};
 use serde_json::json;
 use tokio::net::{TcpListener, ToSocketAddrs};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
@@ -29,8 +29,8 @@ pub async fn serve<A: ToSocketAddrs>(addr: A, state: AppState) -> Result<()> {
 
 fn router() -> Router<AppState> {
     Router::new()
-        .route("/login", get(auth::login))
-        .route("/register", get(auth::register))
+        .route("/login", post(auth::login))
+        .route("/register", post(auth::register))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::permissive())
 }
