@@ -37,7 +37,7 @@ fn router() -> Router<AppState> {
         .route("/register", post(auth::register))
         .route("/user", get(auth::get_user))
         .layer(TraceLayer::new_for_http())
-        .layer(CorsLayer::permissive())
+        .layer(CorsLayer::very_permissive())
 }
 
 type ApiResult<T> = Result<T, ApiError>;

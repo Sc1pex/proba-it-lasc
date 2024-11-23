@@ -126,6 +126,7 @@ pub async fn get_user(
 fn session_cookie<'a>(session_id: Uuid) -> impl Into<Cookie<'a>> {
     Cookie::build(("session_id", session_id.to_string()))
         .max_age(Duration::days(30))
+        .http_only(true)
         .same_site(SameSite::Lax)
 }
 
