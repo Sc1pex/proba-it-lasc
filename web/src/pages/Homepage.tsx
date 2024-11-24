@@ -1,8 +1,11 @@
+import { Navbar } from "../components/Navbar";
 import { Recipe } from "../components/Recipe";
 
 export function Homepage() {
   return (
     <>
+      <Navbar />
+
       <div className="h-[85vh] p-2 pl-[37vw] pt-[24vh]">
         <img src="logo-black.svg" className="h-[290px]" />
       </div>

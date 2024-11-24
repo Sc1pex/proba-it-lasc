@@ -12,7 +12,7 @@ export function Navbar() {
   }, [location]);
 
   const { data, isFetching } = useQuery({
-    queryKey: ["users"],
+    queryKey: ["get_user"],
     queryFn: get_user,
   });
 
@@ -56,7 +56,6 @@ export function Navbar() {
     } else if ("name" in data) {
       return <div>{data.name}</div>;
     } else {
-      console.log(data);
       return auth_links(on_register_page);
     }
   };
