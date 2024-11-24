@@ -1,10 +1,44 @@
+import { useQuery } from "@tanstack/react-query";
 import { Navbar } from "../components/Navbar";
 import { Recipe } from "../components/Recipe";
+import { get_user } from "../lib/server";
+import { NavLink } from "react-router";
+
+function HomepageNavbar() {
+  const { data, isFetching } = useQuery({
+    queryKey: ["get_user"],
+    queryFn: get_user,
+  });
+
+  if (isFetching) {
+    return <div>loading...</div>;
+  } else if (data == undefined) {
+    return <div>error fetching</div>;
+  } else if ("name" in data) {
+    console.log("data", data);
+    return <NavLink to="/profile">Profile</NavLink>;
+  } else {
+    console.log("no data");
+    return (
+      <>
+        <NavLink
+          to="/login"
+          className="rounded-[21px] border-2 border-white px-5 py-1.5"
+        >
+          Login
+        </NavLink>
+        <NavLink to="/register" className="px-5 border-2 border-dark-blue">
+          Register
+        </NavLink>
+      </>
+    );
+  }
+}
 
 export function Homepage() {
   return (
     <>
-      <Navbar />
+      <Navbar right_side={<HomepageNavbar />} />
 
       <div className="h-[85vh] p-2 pl-[37vw] pt-[24vh]">
         <img src="logo-black.svg" className="h-[290px]" />

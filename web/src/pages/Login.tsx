@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { login } from "../lib/server";
-import { useNavigate } from "react-router";
+import { NavLink, useNavigate } from "react-router";
 import { Navbar } from "../components/Navbar";
 import { useForm } from "react-hook-form";
 import { InputField } from "../components/InputField";
@@ -45,7 +45,21 @@ export function Login() {
 
   return (
     <>
-      <Navbar />
+      <Navbar
+        right_side={
+          <>
+            <NavLink
+              to="/login"
+              className="rounded-[21px] border-2 border-white px-5 py-1.5"
+            >
+              Login
+            </NavLink>
+            <NavLink to="/register" className="px-5 border-2 border-dark-blue">
+              Register
+            </NavLink>
+          </>
+        }
+      />
       <div className="mt-[10vh] flex items-start justify-center">
         <form
           className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-[6rem] pt-12 text-white"
