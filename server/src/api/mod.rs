@@ -59,7 +59,7 @@ impl IntoResponse for ApiError {
             ApiError::InvalidData(s) => {
                 (StatusCode::BAD_REQUEST, Json(json!({"err": s}))).into_response()
             }
-            ApiError::InvalidFields(f) => (StatusCode::BAD_REQUEST, Json(f)).into_response(),
+            ApiError::InvalidFields(f) => (StatusCode::OK, Json(f)).into_response(),
             ApiError::Unknown(_) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"err": "internal server error"})),

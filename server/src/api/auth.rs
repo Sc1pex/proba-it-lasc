@@ -36,6 +36,12 @@ pub async fn login(
         ));
     };
 
+    if let Err(pass_err) = valid_password(&login.password) {
+        return Err(ApiError::InvalidFields(
+            [("password".to_string(), pass_err)].into(),
+        ));
+    }
+
     if !correct_password(&user.password_hash, &login.password)? {
         return Err(ApiError::InvalidFields(
             [("password".to_string(), "Wrong password".to_string())].into(),
