@@ -11,7 +11,7 @@ use axum_extra::extract::{
 };
 use serde::{Deserialize, Serialize};
 use std::str::FromStr;
-use time::Duration;
+use time::{Duration, OffsetDateTime};
 use uuid::Uuid;
 
 #[derive(Deserialize)]
@@ -103,6 +103,8 @@ pub async fn register(
 #[derive(Serialize)]
 struct GetUserResponse {
     name: String,
+    email: String,
+    phone: String,
 }
 
 pub async fn get_user(
@@ -124,9 +126,24 @@ pub async fn get_user(
     // TODO: check if session is older than 30 days
 
     let user = state.db.get_user_from_id(&session.user_id).await?;
-    let resp = GetUserResponse { name: user.name };
+    let resp = GetUserResponse {
+        name: user.name,
+        phone: user.phone,
+        email: user.email,
+    };
 
     Ok(Json(resp).into_response())
+}
+
+pub async fn logout(cookies: CookieJar) -> ApiResult<impl IntoResponse> {
+    if let Some(s) = cookies.get("session_id") {
+        let mut s = s.clone();
+        s.set_expires(OffsetDateTime::UNIX_EPOCH);
+        let cookies = cookies.add(s);
+        return Ok(cookies.into_response());
+    } else {
+        return Ok(Json(json!({})).into_response());
+    };
 }
 
 fn session_cookie<'a>(session_id: Uuid) -> impl Into<Cookie<'a>> {

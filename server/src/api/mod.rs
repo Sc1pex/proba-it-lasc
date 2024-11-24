@@ -36,6 +36,7 @@ fn router() -> Router<AppState> {
         .route("/login", post(auth::login))
         .route("/register", post(auth::register))
         .route("/user", get(auth::get_user))
+        .route("/logout", post(auth::logout))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::very_permissive())
 }
