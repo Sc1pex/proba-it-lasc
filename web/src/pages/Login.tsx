@@ -3,6 +3,7 @@ import { login } from "../lib/server";
 import { useNavigate } from "react-router";
 import { Navbar } from "../components/Navbar";
 import { useForm } from "react-hook-form";
+import { InputField } from "../components/InputField";
 
 type LoginFormData = {
   email: string;
@@ -52,37 +53,25 @@ export function Login() {
           className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-[6rem] pt-12 text-white"
           onSubmit={onSubmit}
         >
-          <p className="font-inter text-balance text-center text-[32px] font-bold leading-10">
+          <p className="font-inter text-balance text-center text-[32px] font-bold leading-10 mb-16">
             Loghează-te, <br /> chiorăie mațele!
           </p>
 
-          <div className="mt-16 flex border-b px-2 pb-3">
-            <img src="mail.svg" className="mr-3 w-[30px]" />
-            <input
-              type="email"
-              className="bg-dark-blue placeholder-white focus:outline-none"
-              placeholder="E-mail"
-              {...register("email", { required: true })}
-            />
-          </div>
-          {errors.email && (
-            <span className="text-sm text-red-600">{errors.email.message}</span>
-          )}
+          <InputField
+            icon="mail.svg"
+            placeholder="E-mail"
+            register_hook={register("email", { required: true })}
+            type="email"
+            error={errors.email?.message}
+          />
 
-          <div className="mt-12 flex border-b px-2 pb-3">
-            <img src="lock.svg" className="mr-3 w-[30px]" />
-            <input
-              type="password"
-              className="bg-dark-blue placeholder-white focus:outline-none"
-              placeholder="Password"
-              {...register("password", { required: true })}
-            />
-          </div>
-          {errors.password && (
-            <span className="text-sm text-red-600">
-              {errors.password.message}
-            </span>
-          )}
+          <InputField
+            icon="lock.svg"
+            placeholder="Password"
+            register_hook={register("password", { required: true })}
+            type="password"
+            error={errors.password?.message}
+          />
 
           <div className="mt-16 text-center">
             <button className="bg-green rounded-lg px-24 py-2 text-[32px] font-bold">
