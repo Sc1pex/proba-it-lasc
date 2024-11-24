@@ -1,59 +1,104 @@
+import { useForm } from "react-hook-form";
 import { Navbar } from "../components/Navbar";
+import { useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
+import { register } from "../lib/server";
+import { InputField } from "../components/InputField";
+
+type RegisterFormData = {
+  name: string;
+  phone: string;
+  email: string;
+  password: string;
+  password_confirm: string;
+};
 
 export function Register() {
+  const {
+    register: register_field,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<RegisterFormData>();
+  const onSubmit = handleSubmit((data) => {
+    mutate(data);
+  });
+
+  const navigate = useNavigate();
+  const { mutate } = useMutation({
+    mutationFn: register,
+    onSuccess: (errors) => {
+      console.log(errors);
+
+      if (errors === undefined) {
+        navigate("/");
+      } else {
+        if (errors.email !== undefined) {
+          setError("email", {
+            message: errors.email,
+          });
+        }
+
+        if (errors.password !== undefined) {
+          setError("password", {
+            message: errors.password,
+          });
+        }
+      }
+    },
+  });
+
   return (
     <>
       <Navbar />
       <div className="mt-[10vh] flex items-start justify-center">
-        <form className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-16 pt-12 text-white">
-          <p className="font-inter text-balance text-center text-[32px] font-bold leading-10">
+        <form
+          className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-16 pt-12 text-white"
+          onSubmit={onSubmit}
+        >
+          <p className="font-inter text-balance text-center text-[32px] font-bold leading-10 mb-16">
             Hai, fă foamea cu noi!
           </p>
 
-          <div className="mt-16 flex border-b px-2 pb-3">
-            <img src="person.svg" className="mr-3 w-[30px]" />
-            <input
-              type="email"
-              className="bg-dark-blue placeholder-white focus:outline-none"
-              placeholder="Full name"
-            />
-          </div>
+          <InputField
+            icon="person.svg"
+            placeholder="Full name"
+            register_hook={register_field("name", { required: true })}
+          />
 
-          <div className="mt-8 flex border-b px-2 pb-3">
-            <img src="phone.svg" className="mr-3 h-[30px] w-[30px]" />
-            <input
-              type="email"
-              className="bg-dark-blue placeholder-white focus:outline-none"
-              placeholder="Telephone"
-            />
-          </div>
+          <InputField
+            icon="phone.svg"
+            placeholder="Telephone"
+            register_hook={register_field("phone", { required: true })}
+          />
 
-          <div className="mt-8 flex border-b px-2 pb-3">
-            <img src="mail.svg" className="mr-3 w-[30px]" />
-            <input
-              type="email"
-              className="bg-dark-blue placeholder-white focus:outline-none"
-              placeholder="E-mail"
-            />
-          </div>
+          <InputField
+            icon="mail.svg"
+            placeholder="E-mail"
+            register_hook={register_field("email", { required: true })}
+            type="email"
+            error={errors.email?.message}
+          />
 
-          <div className="mt-8 flex border-b px-2 pb-3">
-            <img src="lock.svg" className="mr-3 w-[30px]" />
-            <input
-              type="password"
-              className="bg-dark-blue placeholder-white focus:outline-none"
-              placeholder="Password"
-            />
-          </div>
+          <InputField
+            icon="lock.svg"
+            placeholder="Password"
+            register_hook={register_field("password", { required: true })}
+            type="password"
+            error={errors.password?.message}
+          />
 
-          <div className="mt-8 flex border-b px-2 pb-3">
-            <img src="lock.svg" className="mr-3 w-[30px]" />
-            <input
-              type="password"
-              className="bg-dark-blue placeholder-white focus:outline-none"
-              placeholder="Confirm Password"
-            />
-          </div>
+          <InputField
+            icon="lock.svg"
+            placeholder="Confirm Password"
+            register_hook={register_field("password_confirm", {
+              required: true,
+              validate: (value, form) =>
+                value === form.password || "Passwords do not match",
+            })}
+            type="password"
+            error={errors.password_confirm?.message}
+          />
 
           <div className="mt-16 text-center">
             <button className="bg-green rounded-lg px-24 py-2 text-[32px] font-bold">
