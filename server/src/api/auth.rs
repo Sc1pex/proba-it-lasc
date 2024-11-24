@@ -121,9 +121,8 @@ pub async fn get_user(
     let session = if let Some(s) = state.db.get_session_from_id(&session_id).await? {
         s
     } else {
-        return invalid_data("Invalid cookie. Please logout and login again");
+        return Ok(Json(json!({})).into_response());
     };
-    // TODO: check if session is older than 30 days
 
     let user = state.db.get_user_from_id(&session.user_id).await?;
     let resp = GetUserResponse {

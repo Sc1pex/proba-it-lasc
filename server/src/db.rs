@@ -1,6 +1,7 @@
+use std::time::Duration;
+
 use anyhow::Result;
 use sqlx::{postgres::PgPoolOptions, query, query_as, PgPool};
-use time::PrimitiveDateTime;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -65,7 +66,7 @@ impl Db {
     pub async fn get_session_from_id(&self, session_id: &Uuid) -> Result<Option<UserSession>> {
         query_as!(
             UserSession,
-            r#"SELECT * FROM UserSessions WHERE session_id = $1"#,
+            r#"SELECT session_id, user_id FROM UserSessions WHERE session_id = $1"#,
             session_id
         )
         .fetch_optional(&self.0)
@@ -76,7 +77,7 @@ impl Db {
     pub async fn get_session_from_user(&self, user_id: &Uuid) -> Result<Option<UserSession>> {
         query_as!(
             UserSession,
-            r#"SELECT * FROM UserSessions WHERE user_id = $1"#,
+            r#"SELECT session_id, user_id FROM UserSessions WHERE user_id = $1"#,
             user_id
         )
         .fetch_optional(&self.0)
@@ -97,6 +98,20 @@ impl Db {
             .await
             .map_err(Into::into)
     }
+
+    pub fn spawn_session_remover_task(&self) {
+        let pool = self.0.clone();
+        tokio::spawn(async move {
+            loop {
+                query!("DELETE FROM UserSessions WHERE created_at < NOW() - interval '30 days'")
+                    .execute(&pool)
+                    .await
+                    .expect("Failed to run old session remover");
+
+                tokio::time::sleep(Duration::from_secs(60 * 60)).await;
+            }
+        });
+    }
 }
 
 pub struct User {
@@ -110,5 +125,4 @@ pub struct User {
 pub struct UserSession {
     pub session_id: Uuid,
     pub user_id: Uuid,
-    pub created_at: PrimitiveDateTime,
 }

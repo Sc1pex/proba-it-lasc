@@ -13,6 +13,7 @@ async fn main() -> Result<()> {
         .init();
 
     let db = Db::new().await;
+    db.spawn_session_remover_task();
 
     api::serve("localhost:8090", api::AppState::new(db)).await
 }
