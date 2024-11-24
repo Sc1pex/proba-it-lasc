@@ -38,6 +38,8 @@ export type User =
   | {}
   | {
       name: string;
+      email: string;
+      phone: string;
     };
 
 export async function get_user() {
@@ -46,4 +48,14 @@ export async function get_user() {
       withCredentials: true,
     })
   ).data as User;
+}
+
+export async function logout() {
+  await axios.post(
+    `${SERVER_URL}/logout`,
+    {},
+    {
+      withCredentials: true,
+    },
+  );
 }
