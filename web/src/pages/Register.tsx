@@ -28,8 +28,6 @@ export function Register() {
   const { mutate } = useMutation({
     mutationFn: register,
     onSuccess: (errors) => {
-      console.log(errors);
-
       if (errors === undefined) {
         navigate("/");
       } else {

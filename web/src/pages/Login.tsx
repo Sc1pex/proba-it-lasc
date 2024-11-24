@@ -25,8 +25,6 @@ export function Login() {
   const { mutate } = useMutation({
     mutationFn: login,
     onSuccess: (errors) => {
-      console.log(errors);
-
       if (errors === undefined) {
         navigate("/");
       } else {
