@@ -45,7 +45,6 @@ type ApiResult<T> = Result<T, ApiError>;
 
 #[derive(Debug)]
 enum ApiError {
-    InvalidData(String),
     InvalidFields(HashMap<String, String>),
 
     #[allow(dead_code)]
@@ -57,9 +56,6 @@ impl IntoResponse for ApiError {
         tracing::error!("API error: {:?}", self);
 
         match self {
-            ApiError::InvalidData(s) => {
-                (StatusCode::BAD_REQUEST, Json(json!({"err": s}))).into_response()
-            }
             ApiError::InvalidFields(f) => (StatusCode::OK, Json(f)).into_response(),
             ApiError::Unknown(_) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
@@ -68,10 +64,6 @@ impl IntoResponse for ApiError {
                 .into_response(),
         }
     }
-}
-
-fn invalid_data<T>(err: impl ToString) -> ApiResult<T> {
-    Err(ApiError::InvalidData(err.to_string()))
 }
 
 impl<T> From<T> for ApiError

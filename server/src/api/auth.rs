@@ -14,6 +14,8 @@ use std::str::FromStr;
 use time::{Duration, OffsetDateTime};
 use uuid::Uuid;
 
+const SESSION_COOKIE: &'static str = "session_id";
+
 #[derive(Deserialize)]
 pub struct LoginRequest {
     email: String,
@@ -81,7 +83,7 @@ pub async fn register(
         );
     }
 
-    if errors.len() != 0 {
+    if errors.is_empty() {
         return Err(ApiError::InvalidFields(errors));
     }
 
@@ -111,7 +113,7 @@ pub async fn get_user(
     State(state): State<AppState>,
     cookies: CookieJar,
 ) -> ApiResult<impl IntoResponse> {
-    let session_id = if let Some(s) = cookies.get("session_id") {
+    let session_id = if let Some(s) = cookies.get(SESSION_COOKIE) {
         s.value()
     } else {
         return Ok(Json(json!({})).into_response());
@@ -135,7 +137,7 @@ pub async fn get_user(
 }
 
 pub async fn logout(cookies: CookieJar) -> ApiResult<impl IntoResponse> {
-    if let Some(s) = cookies.get("session_id") {
+    if let Some(s) = cookies.get(SESSION_COOKIE) {
         let mut s = s.clone();
         s.set_expires(OffsetDateTime::UNIX_EPOCH);
         let cookies = cookies.add(s);
@@ -146,7 +148,7 @@ pub async fn logout(cookies: CookieJar) -> ApiResult<impl IntoResponse> {
 }
 
 fn session_cookie<'a>(session_id: Uuid) -> impl Into<Cookie<'a>> {
-    Cookie::build(("session_id", session_id.to_string()))
+    Cookie::build((SESSION_COOKIE, session_id.to_string()))
         .max_age(Duration::days(30))
         .http_only(true)
         .same_site(SameSite::Lax)
