@@ -16,8 +16,8 @@ export async function register(data: {
   const resp = await axios.post(`${SERVER_URL}/register`, data, {
     withCredentials: true,
   });
-  if (resp.status == 400) {
-    return resp.data;
+  if (resp.data && resp.data.length) {
+    return resp.data as FieldErrors;
   } else {
     return undefined;
   }
@@ -27,8 +27,8 @@ export async function login(data: { email: string; password: string }) {
   const resp = await axios.post(`${SERVER_URL}/login`, data, {
     withCredentials: true,
   });
-  if (resp.status == 400) {
-    return resp.data;
+  if (resp.data && resp.data.length) {
+    return resp.data as FieldErrors;
   } else {
     return undefined;
   }
