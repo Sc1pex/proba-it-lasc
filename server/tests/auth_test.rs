@@ -16,7 +16,7 @@ async fn check_good_data(server: &TestServer) {
     let resp = server
         .post("/register")
         .json(&json!({
-            "name": "abc",
+            "name": "abcdef",
             "phone": "123",
             "email": "a@a.com",
             "password": "abcdef123"
