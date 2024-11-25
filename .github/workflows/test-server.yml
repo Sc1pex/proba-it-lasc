@@ -13,7 +13,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    environment: server testing
+    env:
+      DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
+      RUST_LOG: ${{ vars.TEST_RUST_LOG }}
 
     defaults:
       run:
