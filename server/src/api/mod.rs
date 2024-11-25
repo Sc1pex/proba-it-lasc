@@ -12,6 +12,7 @@ use tokio::net::{TcpListener, ToSocketAddrs};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 mod auth;
+mod extract;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -44,7 +45,7 @@ fn router() -> Router<AppState> {
 type ApiResult<T> = Result<T, ApiError>;
 
 #[derive(Debug)]
-enum ApiError {
+pub enum ApiError {
     InvalidFields(HashMap<String, String>),
 
     #[allow(dead_code)]

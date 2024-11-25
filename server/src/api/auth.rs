@@ -1,4 +1,4 @@
-use super::*;
+use super::{extract::ExtractUser, *};
 use anyhow::{anyhow, Result};
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
@@ -9,12 +9,11 @@ use axum_extra::extract::{
     cookie::{Cookie, SameSite},
     CookieJar,
 };
-use serde::{Deserialize, Serialize};
-use std::str::FromStr;
+use serde::Deserialize;
 use time::{Duration, OffsetDateTime};
 use uuid::Uuid;
 
-const SESSION_COOKIE: &'static str = "session_id";
+pub const SESSION_COOKIE: &str = "session_id";
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -102,38 +101,8 @@ pub async fn register(
     Ok(CookieJar::new().add(session_cookie(session_id)))
 }
 
-#[derive(Serialize)]
-struct GetUserResponse {
-    name: String,
-    email: String,
-    phone: String,
-}
-
-pub async fn get_user(
-    State(state): State<AppState>,
-    cookies: CookieJar,
-) -> ApiResult<impl IntoResponse> {
-    let session_id = if let Some(s) = cookies.get(SESSION_COOKIE) {
-        s.value()
-    } else {
-        return Ok(Json(json!({})).into_response());
-    };
-    let session_id = Uuid::from_str(session_id)?;
-
-    let session = if let Some(s) = state.db.get_session_from_id(&session_id).await? {
-        s
-    } else {
-        return Ok(Json(json!({})).into_response());
-    };
-
-    let user = state.db.get_user_from_id(&session.user_id).await?;
-    let resp = GetUserResponse {
-        name: user.name,
-        phone: user.phone,
-        email: user.email,
-    };
-
-    Ok(Json(resp).into_response())
+pub async fn get_user(user: ExtractUser) -> ApiResult<impl IntoResponse> {
+    Ok(Json(user))
 }
 
 pub async fn logout(cookies: CookieJar) -> ApiResult<impl IntoResponse> {
