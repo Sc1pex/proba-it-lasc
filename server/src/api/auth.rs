@@ -1,3 +1,5 @@
+use std::char;
+
 use super::{extract::ExtractUser, *};
 use anyhow::{anyhow, Result};
 use argon2::{
@@ -9,6 +11,7 @@ use axum_extra::extract::{
     cookie::{Cookie, SameSite},
     CookieJar,
 };
+use email_address::EmailAddress;
 use serde::Deserialize;
 use time::{Duration, OffsetDateTime};
 use uuid::Uuid;
@@ -40,6 +43,12 @@ pub async fn login(
     if let Err(pass_err) = valid_password(&login.password) {
         return Err(ApiError::InvalidFields(
             [("password".to_string(), pass_err)].into(),
+        ));
+    }
+
+    if !EmailAddress::is_valid(&login.email) {
+        return Err(ApiError::InvalidFields(
+            [("email".to_string(), "Invalid email address".into())].into(),
         ));
     }
 
@@ -75,6 +84,14 @@ pub async fn register(
         errors.insert("password".into(), pass_err);
     }
 
+    if !EmailAddress::is_valid(&register.email) {
+        errors.insert("email".into(), "Invalid email address".into());
+    }
+
+    if !valid_phone(&register.phone) {
+        errors.insert("phone".into(), "Invalid phone number".into());
+    }
+
     if state.db.exists_user_with_mail(&register.email).await? {
         errors.insert(
             "email".into(),
@@ -82,7 +99,7 @@ pub async fn register(
         );
     }
 
-    if errors.is_empty() {
+    if !errors.is_empty() {
         return Err(ApiError::InvalidFields(errors));
     }
 
@@ -129,6 +146,18 @@ fn valid_password(password: &str) -> Result<(), String> {
     }
 
     Ok(())
+}
+
+fn valid_phone(phone: &str) -> bool {
+    if phone.is_empty() {
+        return false;
+    }
+
+    if phone.chars().next().unwrap() == '+' {
+        phone.chars().skip(1).all(|c| c.is_ascii_digit())
+    } else {
+        phone.chars().all(|c| c.is_ascii_digit())
+    }
 }
 
 fn correct_password(password_hash: &str, password: &str) -> Result<bool> {
