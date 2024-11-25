@@ -1,5 +1,3 @@
-use std::char;
-
 use super::{extract::ExtractUser, *};
 use anyhow::{anyhow, Result};
 use argon2::{
