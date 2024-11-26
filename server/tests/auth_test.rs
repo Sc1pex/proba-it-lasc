@@ -210,6 +210,5 @@ async fn login_check_bad_password(server: &TestServer) {
     resp.assert_status_ok();
     assert!(resp.maybe_cookie("session_id").is_none());
     let json: Value = resp.json();
-    tracing::info!("{json}");
     assert!(json.get("password").is_some());
 }
