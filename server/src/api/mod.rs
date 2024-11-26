@@ -32,7 +32,7 @@ pub async fn serve<A: ToSocketAddrs>(addr: A, state: AppState) -> Result<()> {
         .map_err(Into::into)
 }
 
-fn router() -> Router<AppState> {
+pub fn router() -> Router<AppState> {
     Router::new()
         .route("/login", post(auth::login))
         .route("/register", post(auth::register))

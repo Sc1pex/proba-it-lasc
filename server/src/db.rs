@@ -8,10 +8,9 @@ use uuid::Uuid;
 pub struct Db(PgPool);
 
 impl Db {
-    pub async fn new() -> Self {
-        let db_url = std::env::var("DATABASE_URL").expect("no DATABASE_URL given");
+    pub async fn new(db_url: &str) -> Self {
         let db = PgPoolOptions::new()
-            .connect(&db_url)
+            .connect(db_url)
             .await
             .expect("Failed to connect to db");
 
@@ -111,6 +110,11 @@ impl Db {
                 tokio::time::sleep(Duration::from_secs(60 * 60)).await;
             }
         });
+    }
+
+    #[allow(dead_code)]
+    pub async fn close(&self) {
+        self.0.close().await;
     }
 }
 
