@@ -10,9 +10,9 @@ pub struct TestServer {
 impl TestServer {
     pub async fn new() -> Self {
         dotenvy::dotenv().unwrap_or_default();
-        tracing_subscriber::fmt()
+        let _ = tracing_subscriber::fmt()
             .with_env_filter(EnvFilter::from_default_env())
-            .init();
+            .try_init();
 
         let db = TestDb::new().await;
         let router = server::api::router().with_state(AppState::new(db.db.clone()));
