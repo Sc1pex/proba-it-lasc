@@ -10,7 +10,7 @@ export function Navbar({ right_side }: { right_side: React.ReactNode }) {
         </NavLink>
 
         <div>Recipes</div>
-        <div>Add recipe</div>
+        <NavLink to="/new-recipe">Add recipe</NavLink>
       </div>
 
       <div className="mr-8 flex items-center gap-8">{right_side}</div>

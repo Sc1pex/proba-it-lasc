@@ -7,6 +7,22 @@ export type FieldErrors = {
   password?: string;
 };
 
+export async function new_recipe(data: {
+  name: string;
+  description: string;
+  image: Blob;
+}) {
+  const req = new FormData();
+  req.append("name", data.name);
+  req.append("description", data.description);
+  req.append("image", data.image);
+
+  const resp = await axios.post(`${SERVER_URL}/new-recipe`, req, {
+    withCredentials: true,
+  });
+  return resp.status == 200;
+}
+
 export async function register(data: {
   name: string;
   phone: string;
