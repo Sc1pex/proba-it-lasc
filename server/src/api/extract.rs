@@ -91,7 +91,7 @@ where
             let field_name = field.name().unwrap().to_string();
             match field_name.as_str() {
                 "name" => name = Some(field.text().await?),
-                "descr" => descr = Some(field.text().await?),
+                "description" => descr = Some(field.text().await?),
                 "image" => image = Some(field.bytes().await?),
                 _ => return Err(invalid_req(format!("Unexpected field {}", field_name))),
             }
