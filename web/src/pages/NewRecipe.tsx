@@ -44,7 +44,7 @@ export function NewRecipe() {
   return (
     <>
       <HomepageNavbar />
-      <div className="mt-[10vh] flex items-start justify-center">
+      <div className="mt-[10vh] flex items-center justify-center">
         <form
           className="w-[38vw] rounded-[20px] bg-dark-blue px-24 pb-[6rem] pt-12 text-white"
           onSubmit={onSubmit}
@@ -75,11 +75,12 @@ export function NewRecipe() {
             )}
           </div>
 
-          <div className="mt-16 text-center">
+          <div className="mt-16">
             <label
               htmlFor="image"
-              className="cursor-pointer border border-white px-2 text-[24px]"
+              className="cursor-pointer px-2 py-1 text-[24px] justify-center border-white border flex outline-none rounded-xl w-max mx-auto gap-1"
             >
+              <img src="clip.svg" />
               Upload photo
               <input
                 id="image"
