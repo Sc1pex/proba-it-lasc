@@ -1,7 +1,7 @@
-use std::time::Duration;
-
 use anyhow::Result;
+use serde::Serialize;
 use sqlx::{postgres::PgPoolOptions, query, query_as, PgPool};
+use std::time::Duration;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -146,6 +146,20 @@ impl Db {
             .map_err(Into::into)
             .map(|r| r.map(|r| r.image))
     }
+
+    pub async fn get_recipes(&self) -> Result<Vec<Recipe>> {
+        query_as!(Recipe, "SELECT name, description, id FROM Recipes")
+            .fetch_all(&self.0)
+            .await
+            .map_err(Into::into)
+    }
+}
+
+#[derive(Serialize)]
+pub struct Recipe {
+    pub name: String,
+    pub description: String,
+    pub id: Uuid,
 }
 
 pub struct User {

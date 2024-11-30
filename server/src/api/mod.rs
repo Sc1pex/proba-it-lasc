@@ -41,6 +41,7 @@ pub fn router() -> Router<AppState> {
         .route("/logout", post(auth::logout))
         .route("/recipe-img", get(recipes::get_recipe_imgage))
         .route("/new-recipe", post(recipes::add_recipe))
+        .route("/recipes", get(recipes::get_recipes))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::very_permissive())
 }

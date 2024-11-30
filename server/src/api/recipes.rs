@@ -1,3 +1,5 @@
+use crate::db::Recipe;
+
 use super::*;
 use axum::{body::Body, extract::State, http::header};
 use extract::{ExtractUser, NewRecipeExtractor};
@@ -22,7 +24,6 @@ pub struct GetRecipeImageRequest {
     id: Uuid,
 }
 
-#[axum::debug_handler]
 pub async fn get_recipe_imgage(
     State(state): State<AppState>,
     Json(req): Json<GetRecipeImageRequest>,
@@ -39,4 +40,8 @@ pub async fn get_recipe_imgage(
 
     let headers = [(header::CONTENT_TYPE, mime_type)];
     Ok((headers, Body::from(image)))
+}
+
+pub async fn get_recipes(State(state): State<AppState>) -> ApiResult<Json<Vec<Recipe>>> {
+    Ok(Json::from(state.db.get_recipes().await?))
 }
