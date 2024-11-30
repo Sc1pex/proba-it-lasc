@@ -7,6 +7,17 @@ export type FieldErrors = {
   password?: string;
 };
 
+export type RecipeResponse = {
+  name: string;
+  description: string;
+  id: string;
+};
+
+export async function get_recipes() {
+  const resp = await axios.get(`${SERVER_URL}/recipes`);
+  return resp.data as RecipeResponse[];
+}
+
 export async function new_recipe(data: {
   name: string;
   description: string;

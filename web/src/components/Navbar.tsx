@@ -9,7 +9,7 @@ export function Navbar({ right_side }: { right_side: React.ReactNode }) {
           <img src="logo-white.svg" className="mr-[100px] h-[60px]" />
         </NavLink>
 
-        <div>Recipes</div>
+        <NavLink to="/recipes">Recipes</NavLink>
         <NavLink to="/new-recipe">Add recipe</NavLink>
       </div>
 
