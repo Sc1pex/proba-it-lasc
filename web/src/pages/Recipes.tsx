@@ -1,14 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
 import { HomepageNavbar } from "../components/HomepageNavbar";
-import { get_recipes } from "../lib/server";
-import { Recipe } from "../components/Recipe";
-import { useRef, useState } from "react";
+import { get_recipes, Recipe } from "../lib/server";
+import { RecipeComponent } from "../components/Recipe";
+import { useEffect, useState } from "react";
 
 export function Recipes() {
   const { data, isFetching } = useQuery({
     queryFn: get_recipes,
     queryKey: ["get_recipes"],
   });
+
+  const [selected_recipe, set_selected_recipe] = useState<undefined | Recipe>(
+    undefined,
+  );
 
   const [search_filter, set_search_filter] = useState<undefined | string>(
     undefined,
@@ -35,17 +39,83 @@ export function Recipes() {
           })
           .map((r, i) => (
             <div key={i} className="bg-transparent">
-              <Recipe
+              <RecipeComponent
                 author={r.author}
                 vertical={true}
                 name={r.name}
                 img_url={r.image_url}
+                on_click={() => {
+                  set_selected_recipe(r);
+                }}
               />
             </div>
           ))}
       </div>
     );
   }
+
+  const reciepe_popup = (
+    <div
+      className="fixed top-0 left-0 w-full h-full bg-opacity-90 bg-neutral-500 flex items-center justify-center"
+      onClick={() => {
+        set_selected_recipe(undefined);
+      }}
+    >
+      <div
+        className="w-[60vw] bg-neutral-50 rounded-xl p-20 relative"
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex">
+            <img
+              src={selected_recipe?.image_url}
+              className="w-[14vw] aspect-square object-contain"
+            />
+
+            <div className="ml-8 py-4">
+              <p className="text-[18px] font-bold">{selected_recipe?.name}</p>
+
+              <div className="mt-4 flex justify-center gap-1">
+                <img className="w-5" src="tmp/star.svg" />
+                <img className="w-5" src="tmp/star.svg" />
+                <img className="w-5" src="tmp/star.svg" />
+                <img className="w-5" src="tmp/star.svg" />
+                <img className="w-5" src="tmp/star.svg" />
+              </div>
+
+              <p className="mt-2 text-[12px] font-light">Nr ratinguri</p>
+
+              <p className="mt-12">Autor:</p>
+              <p>{selected_recipe?.author}</p>
+            </div>
+          </div>
+        </div>
+        <p className="border-b border-b-green text-green mt-4">Description</p>
+        <p>{selected_recipe?.description}</p>
+
+        <img
+          src="close.svg"
+          className="absolute top-8 right-8 hover:cursor-pointer"
+          onClick={() => {
+            set_selected_recipe(undefined);
+          }}
+        />
+      </div>
+    </div>
+  );
+
+  const close_popup = (e: KeyboardEvent) => {
+    if (e.key == "Escape") {
+      set_selected_recipe(undefined);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("keydown", close_popup);
+    return () => window.removeEventListener("keydown", close_popup);
+  }, []);
 
   return (
     <>
@@ -75,6 +145,8 @@ export function Recipes() {
       </div>
 
       {recipes}
+
+      {selected_recipe !== undefined && reciepe_popup}
     </>
   );
 }

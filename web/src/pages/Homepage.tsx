@@ -1,5 +1,5 @@
 import { HomepageNavbar } from "../components/HomepageNavbar";
-import { Recipe } from "../components/Recipe";
+import { RecipeComponent } from "../components/Recipe";
 
 export function Homepage() {
   return (
@@ -16,9 +16,9 @@ export function Homepage() {
         </p>
 
         <div className="mt-12 flex justify-around">
-          <Recipe author="Popescu" name="Reteta 1" />
-          <Recipe author="Popescu" name="Reteta 2" />
-          <Recipe author="Popescu" name="Reteta 3" />
+          <RecipeComponent author="Popescu" name="Reteta 1" />
+          <RecipeComponent author="Popescu" name="Reteta 2" />
+          <RecipeComponent author="Popescu" name="Reteta 3" />
         </div>
       </div>
 

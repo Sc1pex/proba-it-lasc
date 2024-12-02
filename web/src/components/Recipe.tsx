@@ -3,9 +3,16 @@ type RecipeProps = {
   vertical?: boolean;
   author: string;
   img_url?: string;
+  on_click?: () => void;
 };
 
-export function Recipe({ name, vertical, author, img_url }: RecipeProps) {
+export function RecipeComponent({
+  name,
+  vertical,
+  author,
+  img_url,
+  on_click,
+}: RecipeProps) {
   const border = vertical
     ? "border-t-green border-t-2"
     : "border-l-green border-l-2";
@@ -13,7 +20,10 @@ export function Recipe({ name, vertical, author, img_url }: RecipeProps) {
   const img = img_url || "tmp/pizza.png";
 
   return (
-    <div className={vertical ? "flex-col flex bg-white" : "flex bg-white"}>
+    <div
+      className={vertical ? "flex-col flex bg-white" : "flex bg-white"}
+      onClick={on_click}
+    >
       <img src={img} className="w-[14vw] aspect-square object-contain" />
 
       <div
