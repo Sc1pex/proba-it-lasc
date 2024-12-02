@@ -1,5 +1,8 @@
+import { useForm } from "react-hook-form";
 import { HomepageNavbar } from "../components/HomepageNavbar";
 import { RecipeComponent } from "../components/Recipe";
+import { useMutation } from "@tanstack/react-query";
+import { new_contact_form } from "../lib/server";
 
 export function Homepage() {
   return (
@@ -22,34 +25,7 @@ export function Homepage() {
         </div>
       </div>
 
-      <form className="grid grid-cols-5 gap-x-28 px-[15vw] py-8">
-        <h1 className="text-green col-span-5 mb-10 text-[44px] font-bold">
-          Contact us
-        </h1>
-        <div className="col-span-2">
-          <input
-            className="border-green placeholder-green block w-full border-2 p-2 text-[20px]"
-            placeholder="First Name"
-          />
-          <input
-            className="border-green placeholder-green mt-8 block w-full border-2 p-2 text-[20px]"
-            placeholder="Last Name"
-          />
-          <input
-            className="border-green placeholder-green mt-8 block w-full border-2 p-2 text-[20px]"
-            placeholder="Email"
-          />
-        </div>
-
-        <textarea
-          className="border-green placeholder-green col-span-3 border-2 p-2 text-[20px] resize-none"
-          placeholder="Message"
-        ></textarea>
-
-        <button className="bg-green col-start-5 mt-4 rounded-[15px] py-2 text-[20px] font-semibold text-white">
-          Submit
-        </button>
-      </form>
+      <ContactForm />
 
       <div className="relative h-[10vh]">
         <div className="absolute inset-0 -z-10">
@@ -64,5 +40,64 @@ export function Homepage() {
         </div>
       </div>
     </>
+  );
+}
+
+export type ContactFormData = {
+  first_name: string;
+  last_name: string;
+  email: string;
+  message: string;
+};
+
+function ContactForm() {
+  const { register, handleSubmit, reset } = useForm<ContactFormData>();
+
+  const onSubmit = handleSubmit((data) => {
+    mutate(data);
+  });
+  const { mutate } = useMutation({
+    mutationFn: new_contact_form,
+    onSuccess: () => {
+      reset();
+    },
+  });
+
+  return (
+    <form
+      className="grid grid-cols-5 gap-x-28 px-[15vw] py-8"
+      onSubmit={onSubmit}
+    >
+      <h1 className="text-green col-span-5 mb-10 text-[44px] font-bold">
+        Contact us
+      </h1>
+      <div className="col-span-2">
+        <input
+          className="border-green placeholder-green block w-full border-2 p-2 text-[20px] focus:outline-none"
+          placeholder="First Name"
+          {...register("first_name", { required: true })}
+        />
+        <input
+          className="border-green placeholder-green mt-8 block w-full border-2 p-2 text-[20px] focus:outline-none"
+          placeholder="Last Name"
+          {...register("last_name", { required: true })}
+        />
+        <input
+          className="border-green placeholder-green mt-8 block w-full border-2 p-2 text-[20px] focus:outline-none"
+          placeholder="Email"
+          {...register("email", { required: true })}
+        />
+      </div>
+
+      <textarea
+        className="border-green placeholder-green col-span-3 border-2 p-2 text-[20px] resize-none focus:outline-none"
+        placeholder="Message"
+        {...register("message", { required: true })}
+      ></textarea>
+
+      <button className="bg-green col-start-5 mt-4 rounded-[15px] py-2 text-[20px] font-semibold text-white">
+        Submit
+      </button>
+    </form>
   );
 }

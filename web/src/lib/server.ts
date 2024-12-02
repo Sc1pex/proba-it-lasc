@@ -1,4 +1,5 @@
 import axios from "axios";
+import { ContactFormData } from "../pages/Homepage";
 
 const SERVER_URL = "http://localhost:8090";
 
@@ -32,6 +33,10 @@ export async function get_recipes(): Promise<Recipe[]> {
       author: r.author,
     };
   });
+}
+
+export async function new_contact_form(data: ContactFormData) {
+  (await axios.post(`${SERVER_URL}/contact`, data)).status == 200;
 }
 
 export async function new_recipe(data: {
