@@ -42,7 +42,7 @@ export function Homepage() {
         </div>
 
         <textarea
-          className="border-green placeholder-green col-span-3 border-2 p-2 text-[20px]"
+          className="border-green placeholder-green col-span-3 border-2 p-2 text-[20px] resize-none"
           placeholder="Message"
         ></textarea>
 

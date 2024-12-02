@@ -18,10 +18,10 @@ export function Recipes() {
     console.log(data);
 
     recipes = (
-      <div className="grid grid-cols-5">
+      <div className="flex flex-wrap gap-12 justify-center w-[90vw] mx-auto bg-none my-12 bg-transparent">
         {data.map((r) => (
-          <div key={r.id}>
-            <Recipe name={r.name} />
+          <div key={r.id} className="bg-transparent">
+            <Recipe vertical={true} name={r.name} />
           </div>
         ))}
       </div>
