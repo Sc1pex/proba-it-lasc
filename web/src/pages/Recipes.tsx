@@ -35,7 +35,7 @@ export function Recipes() {
           })
           .map((r) => (
             <div key={r.id} className="bg-transparent">
-              <Recipe vertical={true} name={r.name} />
+              <Recipe author={r.author} vertical={true} name={r.name} />
             </div>
           ))}
       </div>

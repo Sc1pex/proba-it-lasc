@@ -148,7 +148,7 @@ impl Db {
     }
 
     pub async fn get_recipes(&self) -> Result<Vec<Recipe>> {
-        query_as!(Recipe, "SELECT name, description, id FROM Recipes")
+        query_as!(Recipe, r#"SELECT r.name, r.description, r.id, u.name as "author!" FROM Recipes as r LEFT JOIN Users as u ON u.id = r.author_id"#)
             .fetch_all(&self.0)
             .await
             .map_err(Into::into)
@@ -160,6 +160,7 @@ pub struct Recipe {
     pub name: String,
     pub description: String,
     pub id: Uuid,
+    pub author: String,
 }
 
 pub struct User {

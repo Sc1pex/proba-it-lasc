@@ -1,9 +1,10 @@
 type RecipeProps = {
   name: string;
   vertical?: boolean;
+  author: string;
 };
 
-export function Recipe({ name, vertical }: RecipeProps) {
+export function Recipe({ name, vertical, author }: RecipeProps) {
   const border = vertical
     ? "border-t-green border-t-2"
     : "border-l-green border-l-2";
@@ -26,7 +27,7 @@ export function Recipe({ name, vertical }: RecipeProps) {
         <p className="mt-2 text-[12px] font-light">Nr ratinguri</p>
 
         <p className="mt-8 font-light">Autor</p>
-        <p className="">Prenume Nume</p>
+        <p className="">{author}</p>
       </div>
     </div>
   );

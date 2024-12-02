@@ -16,9 +16,9 @@ export function Homepage() {
         </p>
 
         <div className="mt-12 flex justify-around">
-          <Recipe name="Reteta 1" />
-          <Recipe name="Reteta 2" />
-          <Recipe name="Reteta 3" />
+          <Recipe author="Popescu" name="Reteta 1" />
+          <Recipe author="Popescu" name="Reteta 2" />
+          <Recipe author="Popescu" name="Reteta 3" />
         </div>
       </div>
 

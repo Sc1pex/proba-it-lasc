@@ -11,6 +11,7 @@ export type RecipeResponse = {
   name: string;
   description: string;
   id: string;
+  author: string;
 };
 
 export async function get_recipes() {
