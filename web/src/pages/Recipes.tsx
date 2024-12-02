@@ -33,9 +33,14 @@ export function Recipes() {
           .filter((r) => {
             return search_filter == undefined || r.name.includes(search_filter);
           })
-          .map((r) => (
-            <div key={r.id} className="bg-transparent">
-              <Recipe author={r.author} vertical={true} name={r.name} />
+          .map((r, i) => (
+            <div key={i} className="bg-transparent">
+              <Recipe
+                author={r.author}
+                vertical={true}
+                name={r.name}
+                img_url={r.image_url}
+              />
             </div>
           ))}
       </div>

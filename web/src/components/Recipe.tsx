@@ -2,18 +2,25 @@ type RecipeProps = {
   name: string;
   vertical?: boolean;
   author: string;
+  img_url?: string;
 };
 
-export function Recipe({ name, vertical, author }: RecipeProps) {
+export function Recipe({ name, vertical, author, img_url }: RecipeProps) {
   const border = vertical
     ? "border-t-green border-t-2"
     : "border-l-green border-l-2";
 
+  const img = img_url || "tmp/pizza.png";
+
   return (
     <div className={vertical ? "flex-col flex bg-white" : "flex bg-white"}>
-      <img src="tmp/pizza.png" className="w-[14vw] object-contain" />
+      <img src={img} className="w-[14vw] aspect-square object-contain" />
 
-      <div className={border + " w-[14vw]  px-4 pb-6 pt-8 text-center"}>
+      <div
+        className={
+          border + " w-[14vw]  px-4 pb-6 pt-8 text-center bg-neutral-100"
+        }
+      >
         <p className="font-bold">{name}</p>
 
         <div className="mt-2 flex justify-center gap-1">

@@ -1,9 +1,12 @@
 use crate::db::Recipe;
 
 use super::*;
-use axum::{body::Body, extract::State, http::header};
+use axum::{
+    body::Body,
+    extract::{Path, State},
+    http::header,
+};
 use extract::{ExtractUser, NewRecipeExtractor};
-use serde::Deserialize;
 use uuid::Uuid;
 
 pub async fn add_recipe(
@@ -19,18 +22,13 @@ pub async fn add_recipe(
     Ok(())
 }
 
-#[derive(Deserialize)]
-pub struct GetRecipeImageRequest {
-    id: Uuid,
-}
-
 pub async fn get_recipe_imgage(
     State(state): State<AppState>,
-    Json(req): Json<GetRecipeImageRequest>,
+    Path(id): Path<Uuid>,
 ) -> ApiResult<impl IntoResponse> {
     let image = state
         .db
-        .get_recipe_image(req.id)
+        .get_recipe_image(id)
         .await?
         .ok_or(invalid_req("invalid recipe id"))?;
 

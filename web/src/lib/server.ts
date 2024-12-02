@@ -14,9 +14,24 @@ export type RecipeResponse = {
   author: string;
 };
 
-export async function get_recipes() {
+export type Recipe = {
+  name: string;
+  description: string;
+  image_url: string;
+  author: string;
+};
+
+export async function get_recipes(): Promise<Recipe[]> {
   const resp = await axios.get(`${SERVER_URL}/recipes`);
-  return resp.data as RecipeResponse[];
+  const data = resp.data as RecipeResponse[];
+  return data.map((r) => {
+    return {
+      name: r.name,
+      description: r.description,
+      image_url: `${SERVER_URL}/recipe-img/${r.id}`,
+      author: r.author,
+    };
+  });
 }
 
 export async function new_recipe(data: {

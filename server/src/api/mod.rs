@@ -39,7 +39,7 @@ pub fn router() -> Router<AppState> {
         .route("/register", post(auth::register))
         .route("/user", get(auth::get_user))
         .route("/logout", post(auth::logout))
-        .route("/recipe-img", get(recipes::get_recipe_imgage))
+        .route("/recipe-img/:id", get(recipes::get_recipe_imgage))
         .route("/new-recipe", post(recipes::add_recipe))
         .route("/recipes", get(recipes::get_recipes))
         .layer(TraceLayer::new_for_http())
