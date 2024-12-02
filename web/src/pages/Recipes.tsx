@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { HomepageNavbar } from "../components/HomepageNavbar";
 import { get_recipes } from "../lib/server";
 import { Recipe } from "../components/Recipe";
+import { useRef, useState } from "react";
 
 export function Recipes() {
   const { data, isFetching } = useQuery({
@@ -9,21 +10,34 @@ export function Recipes() {
     queryKey: ["get_recipes"],
   });
 
+  const [search_filter, set_search_filter] = useState<undefined | string>(
+    undefined,
+  );
+  const handle_search = (e: React.FormEvent<HTMLInputElement>) => {
+    if (e.currentTarget.value.length != 0) {
+      set_search_filter(e.currentTarget.value);
+    } else {
+      set_search_filter(undefined);
+    }
+  };
+
   let recipes = undefined;
   if (isFetching) {
     recipes = <div>Loading...</div>;
   } else if (data === undefined) {
     recipes = <div>Error fetching</div>;
   } else {
-    console.log(data);
-
     recipes = (
       <div className="flex flex-wrap gap-12 justify-center w-[90vw] mx-auto bg-none my-12 bg-transparent">
-        {data.map((r) => (
-          <div key={r.id} className="bg-transparent">
-            <Recipe vertical={true} name={r.name} />
-          </div>
-        ))}
+        {data
+          .filter((r) => {
+            return search_filter == undefined || r.name.includes(search_filter);
+          })
+          .map((r) => (
+            <div key={r.id} className="bg-transparent">
+              <Recipe vertical={true} name={r.name} />
+            </div>
+          ))}
       </div>
     );
   }
@@ -34,7 +48,11 @@ export function Recipes() {
 
       <div className="flex flex-col items-center mt-14 text-gray gap-4">
         <div className="border-2 border-gray w-[35vw] text-[28px] px-4 py-1 rounded-xl font-medium flex justify-between">
-          Search
+          <input
+            onChange={handle_search}
+            placeholder="Search"
+            className="focus:outline-none placeholder:text-gray"
+          />
           <img src="search.svg" className="w-8" />
         </div>
 
