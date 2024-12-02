@@ -2,7 +2,7 @@ import { HTMLInputTypeAttribute } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 type InputFieldProps = {
-  icon: string;
+  icon?: string;
   placeholder: string;
   type?: HTMLInputTypeAttribute;
   error?: string;
@@ -19,7 +19,7 @@ export function InputField({
   return (
     <>
       <div className="mt-8 flex border-b px-2 pb-3">
-        <img src={icon} className="mr-3 w-[30px]" />
+        {icon && <img src={icon} className="mr-3 w-[30px]" />}
         <input
           type={type}
           className="bg-dark-blue placeholder-white focus:outline-none"

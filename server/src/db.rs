@@ -1,7 +1,7 @@
-use std::time::Duration;
-
 use anyhow::Result;
+use serde::Serialize;
 use sqlx::{postgres::PgPoolOptions, query, query_as, PgPool};
+use std::time::Duration;
 use uuid::Uuid;
 
 #[derive(Clone)]
@@ -116,6 +116,51 @@ impl Db {
     pub async fn close(&self) {
         self.0.close().await;
     }
+}
+
+impl Db {
+    pub async fn new_recipe(
+        &self,
+        name: &str,
+        description: &str,
+        image_data: &[u8],
+        author_id: &Uuid,
+    ) -> Result<()> {
+        query!(
+            "INSERT INTO Recipes(name, description, image, author_id) VALUES ($1, $2, $3, $4)",
+            name,
+            description,
+            image_data,
+            author_id
+        )
+        .execute(&self.0)
+        .await
+        .map_err(Into::into)
+        .map(|_| ())
+    }
+
+    pub async fn get_recipe_image(&self, image_id: Uuid) -> Result<Option<Vec<u8>>> {
+        query!("SELECT image FROM Recipes WHERE id = $1", image_id)
+            .fetch_optional(&self.0)
+            .await
+            .map_err(Into::into)
+            .map(|r| r.map(|r| r.image))
+    }
+
+    pub async fn get_recipes(&self) -> Result<Vec<Recipe>> {
+        query_as!(Recipe, r#"SELECT r.name, r.description, r.id, u.name as "author!" FROM Recipes as r LEFT JOIN Users as u ON u.id = r.author_id"#)
+            .fetch_all(&self.0)
+            .await
+            .map_err(Into::into)
+    }
+}
+
+#[derive(Serialize)]
+pub struct Recipe {
+    pub name: String,
+    pub description: String,
+    pub id: Uuid,
+    pub author: String,
 }
 
 pub struct User {

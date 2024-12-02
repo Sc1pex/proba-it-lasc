@@ -1,44 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { Navbar } from "../components/Navbar";
-import { Recipe } from "../components/Recipe";
-import { get_user } from "../lib/server";
-import { NavLink } from "react-router";
-
-function HomepageNavbar() {
-  const { data, isFetching } = useQuery({
-    queryKey: ["get_user"],
-    queryFn: get_user,
-  });
-
-  if (isFetching) {
-    return <div>loading...</div>;
-  } else if (data == undefined) {
-    return <div>error fetching</div>;
-  } else if ("name" in data) {
-    console.log("data", data);
-    return <NavLink to="/profile">Profile</NavLink>;
-  } else {
-    console.log("no data");
-    return (
-      <>
-        <NavLink
-          to="/login"
-          className="rounded-[21px] border-2 border-white px-5 py-1.5"
-        >
-          Login
-        </NavLink>
-        <NavLink to="/register" className="px-5 border-2 border-dark-blue">
-          Register
-        </NavLink>
-      </>
-    );
-  }
-}
+import { HomepageNavbar } from "../components/HomepageNavbar";
+import { RecipeComponent } from "../components/Recipe";
 
 export function Homepage() {
   return (
     <>
-      <Navbar right_side={<HomepageNavbar />} />
+      <HomepageNavbar />
 
       <div className="h-[85vh] p-2 pl-[37vw] pt-[24vh]">
         <img src="logo-black.svg" className="h-[290px]" />
@@ -50,9 +16,9 @@ export function Homepage() {
         </p>
 
         <div className="mt-12 flex justify-around">
-          <Recipe name="Reteta 1" />
-          <Recipe name="Reteta 2" />
-          <Recipe name="Reteta 3" />
+          <RecipeComponent author="Popescu" name="Reteta 1" />
+          <RecipeComponent author="Popescu" name="Reteta 2" />
+          <RecipeComponent author="Popescu" name="Reteta 3" />
         </div>
       </div>
 
@@ -76,7 +42,7 @@ export function Homepage() {
         </div>
 
         <textarea
-          className="border-green placeholder-green col-span-3 border-2 p-2 text-[20px]"
+          className="border-green placeholder-green col-span-3 border-2 p-2 text-[20px] resize-none"
           placeholder="Message"
         ></textarea>
 

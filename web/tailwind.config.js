@@ -6,6 +6,7 @@ export default {
       colors: {
         "dark-blue": "#00236D",
         green: "#009C41",
+        gray: "#3F3F3F",
       },
       fontFamily: {
         body: ['"Montserrat"'],

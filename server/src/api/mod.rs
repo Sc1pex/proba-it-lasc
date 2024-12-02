@@ -13,6 +13,7 @@ use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 mod auth;
 mod extract;
+mod recipes;
 
 #[derive(Clone)]
 pub struct AppState {
@@ -38,6 +39,9 @@ pub fn router() -> Router<AppState> {
         .route("/register", post(auth::register))
         .route("/user", get(auth::get_user))
         .route("/logout", post(auth::logout))
+        .route("/recipe-img/:id", get(recipes::get_recipe_imgage))
+        .route("/new-recipe", post(recipes::add_recipe))
+        .route("/recipes", get(recipes::get_recipes))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::very_permissive())
 }
@@ -47,6 +51,7 @@ type ApiResult<T> = Result<T, ApiError>;
 #[derive(Debug)]
 pub enum ApiError {
     InvalidFields(HashMap<String, String>),
+    InvalidRequest(String),
 
     #[allow(dead_code)]
     Unknown(anyhow::Error),
@@ -58,6 +63,9 @@ impl IntoResponse for ApiError {
 
         match self {
             ApiError::InvalidFields(f) => (StatusCode::OK, Json(f)).into_response(),
+            ApiError::InvalidRequest(err) => {
+                (StatusCode::BAD_REQUEST, Json(json!({"err": err}))).into_response()
+            }
             ApiError::Unknown(_) => (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(json!({"err": "internal server error"})),
@@ -65,6 +73,10 @@ impl IntoResponse for ApiError {
                 .into_response(),
         }
     }
+}
+
+fn invalid_req(err: impl ToString) -> ApiError {
+    ApiError::InvalidRequest(err.to_string())
 }
 
 impl<T> From<T> for ApiError

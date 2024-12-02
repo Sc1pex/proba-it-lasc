@@ -7,6 +7,8 @@ import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Profile } from "./pages/Profile";
+import { NewRecipe } from "./pages/NewRecipe";
+import { Recipes } from "./pages/Recipes";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ createRoot(document.getElementById("root")!).render(
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/new-recipe" element={<NewRecipe />} />
+          <Route path="/recipes" element={<Recipes />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
