@@ -12,6 +12,7 @@ use tokio::net::{TcpListener, ToSocketAddrs};
 use tower_http::{cors::CorsLayer, trace::TraceLayer};
 
 mod auth;
+mod contact;
 mod extract;
 mod recipes;
 
@@ -42,6 +43,8 @@ pub fn router() -> Router<AppState> {
         .route("/recipe-img/:id", get(recipes::get_recipe_imgage))
         .route("/new-recipe", post(recipes::add_recipe))
         .route("/recipes", get(recipes::get_recipes))
+        .route("/contact", post(contact::new_contact))
+        .route("/contact", get(contact::view_contacts))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::very_permissive())
 }

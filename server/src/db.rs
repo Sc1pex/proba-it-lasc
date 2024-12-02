@@ -1,5 +1,5 @@
 use anyhow::Result;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgPoolOptions, query, query_as, PgPool};
 use std::time::Duration;
 use uuid::Uuid;
@@ -153,6 +153,40 @@ impl Db {
             .await
             .map_err(Into::into)
     }
+}
+
+impl Db {
+    pub async fn new_contact(&self, c: ContactForm) -> Result<()> {
+        query!(
+            "INSERT INTO ContactForm(first_name, last_name, email, message) VALUES ($1, $2, $3, $4)",
+            c.first_name,
+            c.last_name,
+            c.email,
+            c.message,
+        )
+        .execute(&self.0)
+        .await
+        .map_err(Into::into)
+        .map(|_| ())
+    }
+
+    pub async fn get_contacts(&self) -> Result<Vec<ContactForm>> {
+        query_as!(
+            ContactForm,
+            r#"SELECT first_name, last_name, email, message FROM ContactForm"#
+        )
+        .fetch_all(&self.0)
+        .await
+        .map_err(Into::into)
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct ContactForm {
+    first_name: String,
+    last_name: String,
+    email: String,
+    message: String,
 }
 
 #[derive(Serialize)]
