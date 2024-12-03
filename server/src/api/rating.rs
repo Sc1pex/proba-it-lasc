@@ -28,6 +28,10 @@ pub async fn rate_recipe(
     user: ExtractUser,
     Json(req): Json<RateRequest>,
 ) -> ApiResult<()> {
+    if req.rating > 10 {
+        return Err(invalid_req("invalid rating"));
+    }
+
     let cur_rating = state.db.user_rating(&user.id, &req.recipe_id).await?;
 
     if let Some(r) = cur_rating {
