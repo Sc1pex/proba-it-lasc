@@ -14,6 +14,7 @@ use tower_http::{cors::CorsLayer, trace::TraceLayer};
 mod auth;
 mod contact;
 mod extract;
+mod rating;
 mod recipes;
 
 #[derive(Clone)]
@@ -45,6 +46,8 @@ pub fn router() -> Router<AppState> {
         .route("/recipes", get(recipes::get_recipes))
         .route("/contact", post(contact::new_contact))
         .route("/contact", get(contact::view_contacts))
+        .route("/get-rating/:recipe_id", get(rating::get_user_rating))
+        .route("/rate-recipe", post(rating::rate_recipe))
         .layer(TraceLayer::new_for_http())
         .layer(CorsLayer::very_permissive())
 }
