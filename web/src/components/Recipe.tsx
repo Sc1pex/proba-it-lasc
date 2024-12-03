@@ -1,8 +1,12 @@
+import { StarRating } from "./StarRating";
+
 type RecipeProps = {
   name: string;
   vertical?: boolean;
   author: string;
   img_url?: string;
+  rating: number;
+  num_ratings: number;
   on_click?: () => void;
 };
 
@@ -11,6 +15,8 @@ export function RecipeComponent({
   vertical,
   author,
   img_url,
+  rating,
+  num_ratings,
   on_click,
 }: RecipeProps) {
   const border = vertical
@@ -34,15 +40,11 @@ export function RecipeComponent({
       >
         <p className="font-bold">{name}</p>
 
-        <div className="mt-2 flex justify-center gap-1">
-          <img src="tmp/star.svg" />
-          <img src="tmp/star.svg" />
-          <img src="tmp/star.svg" />
-          <img src="tmp/star.svg" />
-          <img src="tmp/star.svg" />
+        <div className="mt-2">
+          <StarRating rating={rating} />
         </div>
 
-        <p className="mt-2 text-[12px] font-light">Nr ratinguri</p>
+        <p className="mt-2 text-[12px] font-light">{num_ratings} ratinguri</p>
 
         <p className="mt-8 font-light">Autor</p>
         <p className="">{author}</p>

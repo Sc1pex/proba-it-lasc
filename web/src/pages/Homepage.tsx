@@ -19,9 +19,24 @@ export function Homepage() {
         </p>
 
         <div className="mt-12 flex justify-around">
-          <RecipeComponent author="Popescu" name="Reteta 1" />
-          <RecipeComponent author="Popescu" name="Reteta 2" />
-          <RecipeComponent author="Popescu" name="Reteta 3" />
+          <RecipeComponent
+            num_ratings={0}
+            rating={4}
+            author="Popescu"
+            name="Reteta 1"
+          />
+          <RecipeComponent
+            num_ratings={0}
+            rating={4}
+            author="Popescu"
+            name="Reteta 2"
+          />
+          <RecipeComponent
+            num_ratings={0}
+            rating={4}
+            author="Popescu"
+            name="Reteta 3"
+          />
         </div>
       </div>
 
