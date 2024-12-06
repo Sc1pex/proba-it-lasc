@@ -162,6 +162,26 @@ impl Db {
         .await
         .map_err(Into::into)
     }
+
+    pub async fn top_recipes(&self, count: i64) -> Result<Vec<Recipe>> {
+        query_as!(
+            Recipe,
+            r#"SELECT 
+                r.num_ratings as "num_ratings!", 
+                r.ratings_sum as "ratings_sum!", 
+                r.name, r.description, r.id, 
+                u.name as "author!" 
+            FROM Recipes as r LEFT JOIN Users as u ON u.id = r.author_id
+            WHERE r.num_ratings != 0
+            ORDER BY r.ratings_sum / r.num_ratings DESC
+            LIMIT $1
+            "#,
+            count
+        )
+        .fetch_all(&self.0)
+        .await
+        .map_err(Into::into)
+    }
 }
 
 impl Db {

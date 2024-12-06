@@ -1,6 +1,5 @@
-use crate::db::Recipe;
-
 use super::*;
+use crate::db::Recipe;
 use axum::{
     body::Body,
     extract::{Path, State},
@@ -42,4 +41,11 @@ pub async fn get_recipe_imgage(
 
 pub async fn get_recipes(State(state): State<AppState>) -> ApiResult<Json<Vec<Recipe>>> {
     Ok(Json::from(state.db.get_recipes().await?))
+}
+
+pub async fn get_top_rated(
+    State(state): State<AppState>,
+    Path(count): Path<u32>,
+) -> ApiResult<Json<Vec<Recipe>>> {
+    Ok(Json::from(state.db.top_recipes(count as i64).await?))
 }

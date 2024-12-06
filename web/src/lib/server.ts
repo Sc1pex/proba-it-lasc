@@ -50,6 +50,18 @@ export async function get_recipes(): Promise<Recipe[]> {
   });
 }
 
+export async function get_top_recipes(count: number): Promise<Recipe[]> {
+  const resp = await axios.get(`${SERVER_URL}/top-rated/${count}`);
+  const data = resp.data as RecipeResponse[];
+  return data.map((r) => {
+    return {
+      image_url: `${SERVER_URL}/recipe-img/${r.id}`,
+      avg_rating: r.num_ratings !== 0 ? r.ratings_sum / r.num_ratings : 0,
+      ...r,
+    };
+  });
+}
+
 export async function new_contact_form(data: ContactFormData) {
   (await axios.post(`${SERVER_URL}/contact`, data)).status == 200;
 }

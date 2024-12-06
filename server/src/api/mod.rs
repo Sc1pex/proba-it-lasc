@@ -44,6 +44,7 @@ pub fn router() -> Router<AppState> {
         .route("/recipe-img/:id", get(recipes::get_recipe_imgage))
         .route("/new-recipe", post(recipes::add_recipe))
         .route("/recipes", get(recipes::get_recipes))
+        .route("/top-rated/:count", get(recipes::get_top_rated))
         .route("/contact", post(contact::new_contact))
         .route("/contact", get(contact::view_contacts))
         .route("/get-rating/:recipe_id", get(rating::get_user_rating))
