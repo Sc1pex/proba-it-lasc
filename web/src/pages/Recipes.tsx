@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { HomepageNavbar } from "../components/HomepageNavbar";
 import {
   get_recipes,
+  get_user,
   get_user_rating,
   rate_recipe,
   Recipe,
@@ -9,6 +10,7 @@ import {
 import { RecipeComponent } from "../components/Recipe";
 import { useEffect, useState } from "react";
 import { InteractiveStarRating, StarRating } from "../components/StarRating";
+import { useNavigate } from "react-router";
 
 export function Recipes() {
   const { data, isFetching } = useQuery({
@@ -30,6 +32,11 @@ export function Recipes() {
       set_search_filter(undefined);
     }
   };
+
+  const { data: user } = useQuery({
+    queryKey: ["get_user"],
+    queryFn: get_user,
+  });
 
   let recipes = undefined;
   if (isFetching) {
@@ -110,13 +117,22 @@ export function Recipes() {
           hide={() => {
             set_selected_recipe_idx(undefined);
           }}
+          logged_in={user !== undefined && "name" in user}
         />
       )}
     </>
   );
 }
 
-function RecipePopup({ recipe, hide }: { recipe: Recipe; hide: () => void }) {
+function RecipePopup({
+  recipe,
+  hide,
+  logged_in,
+}: {
+  recipe: Recipe;
+  hide: () => void;
+  logged_in: boolean;
+}) {
   const [rating, set_rating] = useState(0);
 
   const { data } = useQuery({
@@ -137,6 +153,8 @@ function RecipePopup({ recipe, hide }: { recipe: Recipe; hide: () => void }) {
       queryClient.invalidateQueries({ queryKey: ["get_recipes"] });
     },
   });
+
+  const navigate = useNavigate();
 
   return (
     <div
@@ -173,12 +191,21 @@ function RecipePopup({ recipe, hide }: { recipe: Recipe; hide: () => void }) {
           <div className="flex flex-col items-center gap-4">
             <p>Rate this recipe</p>
             <InteractiveStarRating rating={rating} set_rating={set_rating} />
-            <button
-              className="bg-green text-white px-6 py-1 rounded-full mt-4"
-              onClick={() => submit_rating({ recipe_id: recipe.id, rating })}
-            >
-              Submit
-            </button>
+            {logged_in ? (
+              <button
+                className="bg-green text-white px-6 py-1 rounded-full mt-4"
+                onClick={() => submit_rating({ recipe_id: recipe.id, rating })}
+              >
+                Submit
+              </button>
+            ) : (
+              <button
+                className="bg-green text-white px-6 py-1 rounded-full mt-4"
+                onClick={() => navigate("/register")}
+              >
+                Register to rate
+              </button>
+            )}
           </div>
         </div>
         <p className="border-b border-b-green text-green mt-4">Description</p>
