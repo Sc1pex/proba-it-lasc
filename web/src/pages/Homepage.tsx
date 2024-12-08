@@ -1,8 +1,8 @@
 import { useForm } from "react-hook-form";
 import { HomepageNavbar } from "../components/HomepageNavbar";
 import { RecipeComponent } from "../components/Recipe";
-import { useMutation } from "@tanstack/react-query";
-import { new_contact_form } from "../lib/server";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { get_top_recipes, new_contact_form } from "../lib/server";
 
 export function Homepage() {
   return (
@@ -18,11 +18,7 @@ export function Homepage() {
           Top rated recipes
         </p>
 
-        <div className="mt-12 flex justify-around">
-          <RecipeComponent author="Popescu" name="Reteta 1" />
-          <RecipeComponent author="Popescu" name="Reteta 2" />
-          <RecipeComponent author="Popescu" name="Reteta 3" />
-        </div>
+        <TopRated count={3} />
       </div>
 
       <ContactForm />
@@ -41,6 +37,35 @@ export function Homepage() {
       </div>
     </>
   );
+}
+
+function TopRated({ count }: { count: number }) {
+  const { data, isFetching } = useQuery({
+    queryKey: ["get_recipes", count],
+    queryFn: () => get_top_recipes(count),
+  });
+
+  if (isFetching) {
+    return <div>Loading...</div>;
+  } else if (data === undefined) {
+    return <div>Error fetching</div>;
+  } else {
+    return (
+      <div className="mt-12 flex justify-around">
+        {data.map((r, i) => (
+          <div key={i} className="bg-transparent">
+            <RecipeComponent
+              author={r.author}
+              name={r.name}
+              img_url={r.image_url}
+              rating={r.avg_rating}
+              num_ratings={r.num_ratings}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
 }
 
 export type ContactFormData = {

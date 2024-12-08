@@ -18,7 +18,6 @@ export function NewRecipe() {
   } = useForm<NewRecipeFormData>();
   const onSubmit = handleSubmit(
     (data) => {
-      console.log(data);
       mutate({
         ...data,
         image: data.image[0],

@@ -1,4 +1,5 @@
 use anyhow::Result;
+use core::f64;
 use serde::{Deserialize, Serialize};
 use sqlx::{postgres::PgPoolOptions, query, query_as, PgPool};
 use std::time::Duration;
@@ -148,10 +149,38 @@ impl Db {
     }
 
     pub async fn get_recipes(&self) -> Result<Vec<Recipe>> {
-        query_as!(Recipe, r#"SELECT r.name, r.description, r.id, u.name as "author!" FROM Recipes as r LEFT JOIN Users as u ON u.id = r.author_id"#)
-            .fetch_all(&self.0)
-            .await
-            .map_err(Into::into)
+        query_as!(
+            Recipe,
+            r#"SELECT 
+                r.num_ratings as "num_ratings!", 
+                r.ratings_sum as "ratings_sum!", 
+                r.name, r.description, r.id, 
+                u.name as "author!" 
+            FROM Recipes as r LEFT JOIN Users as u ON u.id = r.author_id"#
+        )
+        .fetch_all(&self.0)
+        .await
+        .map_err(Into::into)
+    }
+
+    pub async fn top_recipes(&self, count: i64) -> Result<Vec<Recipe>> {
+        query_as!(
+            Recipe,
+            r#"SELECT 
+                r.num_ratings as "num_ratings!", 
+                r.ratings_sum as "ratings_sum!", 
+                r.name, r.description, r.id, 
+                u.name as "author!" 
+            FROM Recipes as r LEFT JOIN Users as u ON u.id = r.author_id
+            WHERE r.num_ratings != 0
+            ORDER BY r.ratings_sum / r.num_ratings DESC
+            LIMIT $1
+            "#,
+            count
+        )
+        .fetch_all(&self.0)
+        .await
+        .map_err(Into::into)
     }
 }
 
@@ -181,6 +210,67 @@ impl Db {
     }
 }
 
+impl Db {
+    pub async fn user_rating(&self, user_id: &Uuid, recipe_id: &Uuid) -> Result<Option<i32>> {
+        Ok(query!(
+            "SELECT rating FROM Ratings WHERE user_id = $1 AND recipe_id = $2",
+            user_id,
+            recipe_id
+        )
+        .fetch_optional(&self.0)
+        .await?
+        .map(|r| r.rating))
+    }
+
+    pub async fn update_rating(
+        &self,
+        recipe_id: &Uuid,
+        user_id: &Uuid,
+        old_value: i32,
+        new_value: i32,
+    ) -> Result<()> {
+        query!(
+            "UPDATE Ratings SET rating = $3 WHERE user_id = $1 AND recipe_id = $2",
+            user_id,
+            recipe_id,
+            new_value,
+        )
+        .execute(&self.0)
+        .await?;
+
+        query!(
+            "UPDATE Recipes SET ratings_sum = ratings_sum + $1 WHERE id = $2",
+            (new_value - old_value) as f64,
+            recipe_id
+        )
+        .execute(&self.0)
+        .await
+        .map_err(Into::into)
+        .map(|_| ())
+    }
+
+    pub async fn add_rating(&self, recipe_id: &Uuid, user_id: &Uuid, value: i32) -> Result<()> {
+        query!(
+            "INSERT INTO Ratings(user_id, recipe_id, rating) VALUES ($1, $2, $3)",
+            user_id,
+            recipe_id,
+            value
+        )
+        .execute(&self.0)
+        .await?;
+
+        query!(
+            "UPDATE Recipes SET num_ratings = num_ratings + 1, ratings_sum = ratings_sum + $1 WHERE id = $2", 
+            value as f64,
+            recipe_id
+        )
+        .execute(&self.0)
+        .await
+        .map_err(Into::into)
+        .map(|_| ())
+    }
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct ContactForm {
     first_name: String,
@@ -195,6 +285,9 @@ pub struct Recipe {
     pub description: String,
     pub id: Uuid,
     pub author: String,
+
+    pub num_ratings: i32,
+    pub ratings_sum: f64,
 }
 
 pub struct User {
