@@ -11,6 +11,7 @@ import { RecipeComponent } from "../components/Recipe";
 import { useEffect, useState } from "react";
 import { InteractiveStarRating, StarRating } from "../components/StarRating";
 import { useNavigate } from "react-router";
+import { Dropdown } from "../components/Dropdown";
 
 export function Recipes() {
   const { data, isFetching } = useQuery({
@@ -38,17 +39,51 @@ export function Recipes() {
     queryFn: get_user,
   });
 
+  const [rating_filter, set_rating_filter] = useState<number[]>([]);
+  const toggle_rating = (rating: number) => {
+    if (rating_filter.includes(rating)) {
+      set_rating_filter((arr) => arr.filter((r) => r != rating));
+    } else {
+      set_rating_filter([rating, ...rating_filter]);
+    }
+  };
+
+  const filter_rating = (rating: number) => {
+    for (const r of rating_filter) {
+      if (r <= rating && rating < r + 2) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const [sort_by, set_sort_by] = useState<"top" | "worst" | "most" | "least">(
+    "top",
+  );
+
   let recipes = undefined;
   if (isFetching) {
     recipes = <div>Loading...</div>;
   } else if (data === undefined) {
     recipes = <div>Error fetching</div>;
   } else {
-    data.sort((a, b) => a.name.localeCompare(b.name));
+    data.sort((a, b) => {
+      if (sort_by === "top") {
+        return b.avg_rating - a.avg_rating;
+      } else if (sort_by === "worst") {
+        return a.avg_rating - b.avg_rating;
+      } else if (sort_by == "most") {
+        return b.num_ratings - a.num_ratings;
+      }
+      return a.num_ratings - b.num_ratings;
+    });
 
     recipes = (
       <div className="flex flex-wrap gap-12 justify-center w-[90vw] mx-auto bg-none my-12 bg-transparent">
         {data
+          .filter(
+            (r) => rating_filter.length === 0 || filter_rating(r.avg_rating),
+          )
           .filter(
             (r) => search_filter == undefined || r.name.includes(search_filter),
           )
@@ -97,15 +132,95 @@ export function Recipes() {
         </div>
 
         <div className="flex justify-around w-[35vw] font-semibold">
-          <div className="shadow-[1px_1px_15px_-3px_rgba(0,0,0,0.25)] px-8 rounded-xl h-12 w-[13vw] text-[22px] flex justify-between items-center">
-            Filter
-            <img src="arrow_down.svg" className="w-6" />
-          </div>
+          <Dropdown
+            label={
+              <div className="shadow-[1px_1px_15px_-3px_rgba(0,0,0,0.25)] px-8 rounded-xl h-12 w-[13vw] text-[22px] flex justify-between items-center bg-white">
+                Filter
+                <img src="arrow_down.svg" className="w-6" />
+              </div>
+            }
+            dropdown={
+              <div className="bg-zinc-200 mt-8 pt-4 w-[13vw] rounded-xl">
+                <div className="flex justify-around py-2 mx-2 border-b border-b-gray">
+                  <StarRating rating={10} img_cls="h-7" />
+                  <input
+                    type="checkbox"
+                    className="w-5"
+                    onChange={() => toggle_rating(10)}
+                  />
+                </div>
+                <div className="flex justify-around py-2 mx-2 border-b border-b-gray">
+                  <StarRating rating={8} img_cls="h-7" />
+                  <input
+                    type="checkbox"
+                    className="w-5"
+                    onChange={() => toggle_rating(8)}
+                  />
+                </div>
+                <div className="flex justify-around py-2 mx-2 border-b border-b-gray">
+                  <StarRating rating={6} img_cls="h-7" />
+                  <input
+                    type="checkbox"
+                    className="w-5"
+                    onChange={() => toggle_rating(6)}
+                  />
+                </div>
+                <div className="flex justify-around py-2 mx-2 border-b border-b-gray">
+                  <StarRating rating={4} img_cls="h-7" />
+                  <input
+                    type="checkbox"
+                    className="w-5"
+                    onChange={() => toggle_rating(4)}
+                  />
+                </div>
+                <div className="flex justify-around pt-2 pb-4 mx-2">
+                  <StarRating rating={2} img_cls="h-7" />
+                  <input
+                    type="checkbox"
+                    className="w-5"
+                    onChange={() => toggle_rating(2)}
+                  />
+                </div>
+              </div>
+            }
+          />
 
-          <div className="shadow-[1px_1px_15px_-3px_rgba(0,0,0,0.25)] px-8 rounded-xl h-12 w-[13vw] text-[22px] flex justify-between items-center">
-            Sort
-            <img src="arrow_down.svg" className="w-6" />
-          </div>
+          <Dropdown
+            label={
+              <div className="shadow-[1px_1px_15px_-3px_rgba(0,0,0,0.25)] px-8 rounded-xl h-12 w-[13vw] text-[22px] flex justify-between items-center bg-white">
+                Sort
+                <img src="arrow_down.svg" className="w-6" />
+              </div>
+            }
+            dropdown={
+              <div className="bg-zinc-200 mt-8 pt-4 w-[13vw] rounded-xl flex flex-col font-bold text-xl">
+                <button
+                  className="flex justify-around py-2 mx-2 border-b border-b-gray text-center"
+                  onClick={() => set_sort_by("top")}
+                >
+                  Top rated
+                </button>
+                <button
+                  className="flex justify-around py-2 mx-2 border-b border-b-gray text-center"
+                  onClick={() => set_sort_by("worst")}
+                >
+                  Worst rated
+                </button>
+                <button
+                  className="flex justify-around py-2 mx-2 border-b border-b-gray text-center"
+                  onClick={() => set_sort_by("most")}
+                >
+                  Most rated
+                </button>
+                <button
+                  className="flex justify-around pt-2 pb-4 mx-2"
+                  onClick={() => set_sort_by("least")}
+                >
+                  Least rated
+                </button>
+              </div>
+            }
+          />
         </div>
       </div>
 
