@@ -6,15 +6,19 @@ use uuid::Uuid;
 
 pub async fn get_user_rating(
     State(state): State<AppState>,
-    user: ExtractUser,
+    user: Option<ExtractUser>,
     Path(recipe_id): Path<Uuid>,
 ) -> ApiResult<String> {
-    Ok(state
-        .db
-        .user_rating(&user.id, &recipe_id)
-        .await?
-        .unwrap_or(0)
-        .to_string())
+    if let Some(user) = user {
+        Ok(state
+            .db
+            .user_rating(&user.id, &recipe_id)
+            .await?
+            .unwrap_or(0)
+            .to_string())
+    } else {
+        Ok("0".into())
+    }
 }
 
 #[derive(Deserialize)]
