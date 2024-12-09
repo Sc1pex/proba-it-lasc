@@ -73,7 +73,7 @@ export function Register() {
           </p>
 
           <InputField
-            icon="person.svg"
+            icon="person.png"
             placeholder="Full name"
             register_hook={register_field("name", { required: true })}
           />

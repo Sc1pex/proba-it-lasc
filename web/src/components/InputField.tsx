@@ -18,8 +18,8 @@ export function InputField({
 }: InputFieldProps) {
   return (
     <>
-      <div className="mt-8 flex border-b px-2 pb-3">
-        {icon && <img src={icon} className="mr-3 w-[30px]" />}
+      <div className="mt-8 flex border-b px-2 pb-3 h-12">
+        {icon && <img src={icon} className="mr-3 max-w-[30px]" />}
         <input
           type={type}
           className="bg-dark-blue placeholder-white focus:outline-none"
