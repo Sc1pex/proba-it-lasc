@@ -38,7 +38,9 @@ export function RecipeComponent({
           border + " w-[14vw]  px-4 pb-6 pt-8 text-center bg-neutral-100"
         }
       >
-        <p className="font-bold">{name}</p>
+        <p className="font-bold whitespace-nowrap overflow-hidden text-ellipsis">
+          {name}
+        </p>
 
         <div className="mt-2">
           <StarRating rating={rating} />
