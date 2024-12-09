@@ -37,3 +37,30 @@ RUST_LOG=warn cargo run
 npm install
 npm run dev
 ```
+
+## Descriere
+
+Feature-uri implementate:
+
+- Homepage cu cele 3 retete cu cel mai mare rating si formul de contact
+- Pagini de register/login cu validarea datelor (si pe client si pe server)
+- Autentificare prin session cookies
+- Pagina de profil
+- Pagina pentru crearea retetelor
+- Stocarea imaginilor pentru retete in baza de date
+- Pagina pentru vizualizarea retetelor
+- Filtrarea si sortarea retetelor in functie de rating
+- Popup pentru fiecare reteta unde se poate lasa un rating
+- Endpointuri pentru lasarea unui rating si pentru gasirea unui rating
+
+Feature-uri neimplementate:
+
+- Ui mobile
+
+### Descriere Backend
+
+Backendul este scris in rust si am folosit libraria [axum](https://github.com/tokio-rs/axum) pentru serverul de http. Pentru baza de date am folosit PostgreSQL cu libraria [sqlx](https://github.com/launchbadge/sqlx).
+
+### Descriere Frontend
+
+Frontendul este facut cu Vite si React+Typescript
