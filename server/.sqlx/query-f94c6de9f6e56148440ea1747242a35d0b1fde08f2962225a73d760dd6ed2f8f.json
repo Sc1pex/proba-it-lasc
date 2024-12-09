@@ -1,0 +1,12 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM UserSessions WHERE created_at < NOW() - interval '30 days'",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": []
+  },
+  "hash": "f94c6de9f6e56148440ea1747242a35d0b1fde08f2962225a73d760dd6ed2f8f"
+}

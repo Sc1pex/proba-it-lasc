@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE Recipes SET num_ratings = num_ratings + 1, ratings_sum = ratings_sum + $1 WHERE id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Float8",
+        "Uuid"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "bbe6ec593d08ef714ed6713051a8ee1b0ed9f0b7b7fa817aa7f14e13d1644fd5"
+}

@@ -1,0 +1,50 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT \n                r.num_ratings as \"num_ratings!\", \n                r.ratings_sum as \"ratings_sum!\", \n                r.name, r.description, r.id, \n                u.name as \"author!\" \n            FROM Recipes as r LEFT JOIN Users as u ON u.id = r.author_id",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "num_ratings!",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "ratings_sum!",
+        "type_info": "Float8"
+      },
+      {
+        "ordinal": 2,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 5,
+        "name": "author!",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      true,
+      true,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "58bb21825aab711ee52dbf22aec11a93a3dff12693b1bd5eca091c41a51b0d07"
+}

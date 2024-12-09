@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE Ratings SET rating = $3 WHERE user_id = $1 AND recipe_id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Uuid",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "aa9629ca12537a689d03881b0d28fff881729f8810bc0ac596ff8be3a7649c4c"
+}
