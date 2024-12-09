@@ -44,7 +44,9 @@ export function RecipeComponent({
           <StarRating rating={rating} />
         </div>
 
-        <p className="mt-2 text-[12px] font-light">{num_ratings} ratinguri</p>
+        <p className="mt-2 text-[12px] font-light">
+          {num_ratings} {"rating" + (num_ratings != 1 ? "uri" : "")}
+        </p>
 
         <p className="mt-8 font-light">Autor</p>
         <p className="">{author}</p>
