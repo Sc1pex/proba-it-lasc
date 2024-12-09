@@ -1,7 +1,7 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router";
-import { new_recipe } from "../lib/server";
+import { get_user, new_recipe } from "../lib/server";
 import { HomepageNavbar } from "../components/HomepageNavbar";
 
 type NewRecipeFormData = {
@@ -39,6 +39,12 @@ export function NewRecipe() {
       }
     },
   });
+
+  const { data: user } = useQuery({
+    queryKey: ["get_user"],
+    queryFn: get_user,
+  });
+  const logged_in = () => user !== undefined && "name" in user;
 
   return (
     <>
@@ -96,9 +102,18 @@ export function NewRecipe() {
           </div>
 
           <div className="mt-16 text-center">
-            <button className="bg-green rounded-lg px-12 py-2 text-[32px] font-bold">
-              Add recipe
-            </button>
+            {logged_in() ? (
+              <button className="bg-green rounded-lg px-12 py-2 text-[32px] font-bold">
+                Add recipe
+              </button>
+            ) : (
+              <button
+                className="bg-green rounded-lg px-12 py-2 font-bold text-[20px]"
+                onClick={() => navigate("/register")}
+              >
+                Register to add recipes
+              </button>
+            )}
           </div>
         </form>
       </div>
