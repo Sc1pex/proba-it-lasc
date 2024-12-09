@@ -38,6 +38,15 @@ npm install
 npm run dev
 ```
 
+### Baza de date exemplu
+
+Fisierul .env.example contine un url pentru o baza de date care contine mai multe intrari. Parola pentru fiecare user este la fel ca numele
+- Useri: 
+  - Victor Marin. email: dgeorgescu@cretu.info
+  - Aurelian Ghiță. email: edmond25@hotmail.com
+  - Ștefania Birău. email: coman.ramona@turcu.net
+  - Paul Ciobanu. email: paula74@manole.com
+
 ## Descriere
 
 Feature-uri implementate:
